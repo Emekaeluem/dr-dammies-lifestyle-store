@@ -18,7 +18,6 @@ function toggleMenu() {
     navLinks.classList.toggle('active');
     toggle.classList.toggle('open');
 }
-
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
         document.getElementById('navLinks')?.classList.remove('active');
@@ -27,473 +26,703 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ============================================
-// CONSTELLATION GLOBE — DR. DAMMIE'S EDITION
+// WELLNESS ORB — Dr. Dammie's
 // ============================================
 (function () {
     const container = document.getElementById('globe-container');
-    if (!container) return;
+    if (!container || typeof THREE === 'undefined') return;
 
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;cursor:grab;';
-    container.style.position = 'relative';
-    container.appendChild(canvas);
-
-    const ctx = canvas.getContext('2d');
-    let W, H, cx, cy, R;
-
-    function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        W = container.offsetWidth;
-        H = container.offsetHeight;
-        canvas.width  = W * dpr;
-        canvas.height = H * dpr;
-        canvas.style.width  = W + 'px';
-        canvas.style.height = H + 'px';
-        ctx.scale(dpr, dpr);
-        cx = W / 2;
-        cy = H / 2;
-        R  = Math.min(W, H) * 0.42;
-    }
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-
-    // ── Rotation state ──
-    let rotY = 0.3, rotX = 0.15;
-    let velX = 0, velY = 0;
-    let dragging = false, auto = true;
-    let ds = { x: 0, y: 0 };
-
-    canvas.addEventListener('mousedown', e => {
-        dragging = true; auto = false;
-        ds = { x: e.clientX, y: e.clientY };
-        canvas.style.cursor = 'grabbing';
-    });
-    window.addEventListener('mousemove', e => {
-        if (!dragging) return;
-        const dx = e.clientX - ds.x, dy = e.clientY - ds.y;
-        velY = dx * 0.005; velX = dy * 0.005;
-        rotY += velY;
-        rotX = Math.max(-0.55, Math.min(0.55, rotX + velX));
-        ds = { x: e.clientX, y: e.clientY };
-    });
-    window.addEventListener('mouseup', () => {
-        dragging = false;
-        canvas.style.cursor = 'grab';
-        setTimeout(() => auto = true, 2200);
-    });
-    canvas.addEventListener('touchstart', e => {
-        dragging = true; auto = false;
-        ds = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }, { passive: true });
-    canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        const dx = e.touches[0].clientX - ds.x, dy = e.touches[0].clientY - ds.y;
-        velY = dx * 0.005; velX = dy * 0.005;
-        rotY += velY;
-        rotX = Math.max(-0.55, Math.min(0.55, rotX + velX));
-        ds = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    }, { passive: false });
-    canvas.addEventListener('touchend', () => {
-        dragging = false;
-        setTimeout(() => auto = true, 2200);
-    });
-
-    // ── Projection ──
-    function project(latD, lonD) {
-        const lat = latD * Math.PI / 180;
-        const lon = lonD * Math.PI / 180 + rotY;
-        let x = Math.cos(lat) * Math.cos(lon);
-        let y = Math.sin(lat);
-        let z = Math.cos(lat) * Math.sin(lon);
-        const cX = Math.cos(rotX), sX = Math.sin(rotX);
-        const y2 = y * cX - z * sX;
-        const z2 = y * sX + z * cX;
-        return { x: cx + x * R, y: cy - y2 * R, z: z2, v: z2 > -0.05 };
-    }
-
-    // ── Continental outline coordinates ──
-    const CONTS = [
-        // North America
-        [[70,-140],[68,-110],[62,-90],[58,-94],[48,-88],[44,-66],[42,-70],[38,-76],[30,-81],[24,-82],[22,-90],[16,-88],[12,-84],[8,-77],[18,-67],[20,-74],[24,-90],[22,-106],[20,-105],[16,-96],[14,-88],[22,-90],[24,-110],[28,-112],[30,-116],[32,-117],[38,-122],[44,-124],[50,-125],[56,-130],[60,-146],[60,-152],[58,-158],[64,-166],[68,-166],[70,-162],[68,-150],[70,-140]],
-        // Greenland
-        [[76,-70],[80,-52],[84,-44],[82,-28],[76,-22],[70,-26],[66,-36],[66,-46],[70,-64],[76,-70]],
-        // South America
-        [[12,-72],[8,-62],[4,-52],[0,-50],[-4,-44],[-8,-36],[-14,-38],[-20,-40],[-24,-46],[-30,-50],[-36,-54],[-42,-64],[-50,-70],[-56,-68],[-52,-64],[-46,-65],[-38,-58],[-30,-50],[-22,-42],[-14,-38],[-6,-36],[0,-44],[6,-58],[10,-62],[12,-72]],
-        // Europe
-        [[70,28],[66,14],[60,5],[56,8],[52,4],[48,0],[44,-2],[44,6],[42,8],[38,0],[36,-6],[36,8],[38,16],[40,18],[40,22],[36,28],[36,34],[40,30],[44,28],[46,30],[48,22],[52,14],[56,10],[60,6],[64,10],[68,16],[70,22],[70,28]],
-        // Africa
-        [[36,10],[28,12],[20,16],[12,12],[8,4],[0,6],[-4,10],[-10,14],[-18,20],[-28,18],[-34,22],[-34,26],[-28,34],[-22,36],[-14,38],[-4,40],[4,44],[8,48],[12,52],[12,42],[8,38],[4,36],[0,34],[8,30],[14,32],[20,36],[28,32],[34,30],[36,10]],
-        // Asia
-        [[70,30],[64,40],[60,44],[56,48],[52,52],[48,58],[44,58],[36,62],[28,66],[20,70],[16,74],[8,78],[8,80],[16,82],[24,90],[28,98],[24,100],[20,100],[16,104],[12,108],[4,108],[0,110],[4,114],[8,116],[16,120],[20,116],[24,116],[28,120],[36,120],[40,122],[44,128],[50,140],[56,140],[60,150],[64,148],[60,132],[56,130],[52,132],[48,140],[44,142],[44,148],[48,140],[52,140],[56,138],[60,140],[64,148],[68,150],[70,154],[70,140],[66,134],[60,128],[56,124],[48,116],[40,106],[36,102],[28,96],[20,88],[12,80],[8,78],[4,76],[4,70],[8,66],[12,62],[16,56],[20,58],[24,56],[28,50],[32,46],[36,44],[40,42],[44,40],[52,46],[56,48],[60,44],[64,40],[68,38],[70,30]],
-        // Australia
-        [[-16,136],[-12,130],[-18,122],[-26,114],[-32,116],[-36,120],[-38,128],[-36,136],[-34,138],[-36,140],[-40,148],[-36,152],[-30,154],[-22,150],[-16,144],[-12,136],[-16,136]],
-        // Japan
-        [[40,140],[38,140],[36,136],[34,132],[34,130],[36,130],[38,134],[40,138],[40,140]],
-        // UK
-        [[50,-6],[52,-4],[56,0],[58,-4],[56,-6],[52,-4],[50,-6]],
-        // New Zealand
-        [[-34,172],[-38,176],[-44,170],[-46,170],[-44,172],[-38,174],[-34,172]],
-    ];
-
-    // ── Scatter dots — surface dots on globe (constellation feel) ──
-    // Pre-generate: a mix of dense clusters and sparse fills
-    const DOTS = [];
-    (function () {
-        let rng = 137;
-        const rand = () => { rng = (rng * 1664525 + 1013904223) & 0xFFFFFFFF; return (rng >>> 0) / 0xFFFFFFFF; };
-
-        // Dr. Dammie's palette dot colors
-        const COLS = [
-            'rgba(196,218,132,IDX)',   // sage — main
-            'rgba(196,218,132,IDX)',   // sage — repeated for weight
-            'rgba(0,92,46,IDX)',       // forest mid
-            'rgba(216,233,168,IDX)',   // sage light
-            'rgba(143,181,90,IDX)',    // mid green
-            'rgba(255,255,255,IDX)',   // white accent
-        ];
-
-        for (let i = 0; i < 480; i++) {
-            // Fibonacci sphere distribution for even spread
-            const theta = Math.acos(2 * rand() - 1);
-            const phi   = rand() * Math.PI * 2;
-            const latD  = (Math.PI / 2 - theta) * 180 / Math.PI;
-            const lonD  = phi * 180 / Math.PI - 180;
-            const col   = COLS[Math.floor(rand() * COLS.length)];
-            const size  = 0.9 + rand() * 1.6;
-            const alpha = 0.25 + rand() * 0.55;
-            const shape = rand() > 0.72 ? 'sq' : 'ci'; // mix squares and circles like reference
-            DOTS.push({ lat: latD, lon: lonD, col: col.replace('IDX', alpha.toFixed(2)), size, shape });
-        }
-    })();
-
-    // ── Planet nodes ──
-    const NODES = [
-        { lat: 4,   lon: 20,   label: '🌿 Organic',      r: 22, fill: '#C4DA84', ring: '#8FB55A', glow: 'rgba(196,218,132,0.35)' },
-        { lat: 22,  lon: -102, label: '🥑 Keto',          r: 18, fill: '#003D1F', ring: '#C4DA84', glow: 'rgba(196,218,132,0.3)'  },
-        { lat: 51,  lon: 10,   label: '🌾 Gluten-Free',   r: 20, fill: '#D8E9A8', ring: '#004723', glow: 'rgba(216,233,168,0.35)' },
-        { lat: -24, lon: 133,  label: '🥗 Low-Carb',      r: 16, fill: '#005C2E', ring: '#C4DA84', glow: 'rgba(0,92,46,0.4)'      },
-        { lat: 34,  lon: 108,  label: '🍵 Wellness',      r: 22, fill: '#C4DA84', ring: '#003D1F', glow: 'rgba(196,218,132,0.4)'  },
-        { lat: -10, lon: -54,  label: '🍫 Chocolate',     r: 17, fill: '#004723', ring: '#D8E9A8', glow: 'rgba(0,71,35,0.45)'     },
-        { lat: 55,  lon: 78,   label: '🥜 Snacks',        r: 19, fill: '#8FB55A', ring: '#003D1F', glow: 'rgba(143,181,90,0.35)'  },
-        { lat: 24,  lon: 70,   label: '💊 Supplements',   r: 15, fill: '#D8E9A8', ring: '#005C2E', glow: 'rgba(216,233,168,0.3)'  },
-        { lat: -34, lon: 25,   label: '❤️ Heart Health',  r: 20, fill: '#003D1F', ring: '#C4DA84', glow: 'rgba(196,218,132,0.35)' },
-        { lat: 15,  lon: 44,   label: '🌱 Plant-Based',   r: 14, fill: '#C4DA84', ring: '#004723', glow: 'rgba(196,218,132,0.3)'  },
-        { lat: 60,  lon: -90,  label: '⚡ Vitality',      r: 18, fill: '#005C2E', ring: '#D8E9A8', glow: 'rgba(0,92,46,0.4)'      },
-    ];
-
-    // ── Tooltip ──
+    // ── Tooltip ──────────────────────────────
     const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
-        position:fixed;z-index:500;pointer-events:none;
-        background:rgba(0,25,12,0.94);border:1px solid rgba(196,218,132,0.5);
-        border-radius:10px;padding:8px 15px;
-        font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
-        color:#C4DA84;backdrop-filter:blur(14px);
-        opacity:0;transition:opacity 0.18s;white-space:nowrap;
-        box-shadow:0 4px 22px rgba(0,71,35,0.4);
-    `;
+    tooltip.className = 'globe-tooltip';
     document.body.appendChild(tooltip);
 
-    canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-        let found = null;
-        NODES.forEach(n => {
-            if (!n.p || !n.p.v) return;
-            const dx = mx - n.p.x, dy = my - n.p.y;
-            if (Math.sqrt(dx * dx + dy * dy) < n.r + 8) found = n;
+    // ── Renderer ──────────────────────────────
+    const W = container.offsetWidth || 600;
+    const H = container.offsetHeight || 620;
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = false;
+    container.appendChild(renderer.domElement);
+
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 200);
+    camera.position.set(0, 0, 7.2);
+
+    // ── Groups ──────────────────────────────
+    const ROOT   = new THREE.Group(); // everything rotates here
+    const ORBITS = new THREE.Group(); // orbit rings only (counter-rotate for static look)
+    scene.add(ROOT);
+    scene.add(ORBITS);
+
+    // ── PALETTE ──────────────────────────────
+    const HEX = {
+        forest:  0x003D1F,
+        forestM: 0x004723,
+        sage:    0xC4DA84,
+        sageDim: 0x8BAD4A,
+        white:   0xFFFFFF,
+        cream:   0xF0F7E6,
+    };
+
+    // ── CORE SPHERE ──────────────────────────
+    // Layered translucent spheres for depth + glow
+    const coreGeo = new THREE.SphereGeometry(2.0, 64, 64);
+
+    // Outer skin — very faint sage tint
+    const skinMat = new THREE.MeshPhongMaterial({
+        color: HEX.sage,
+        emissive: HEX.sage,
+        emissiveIntensity: 0.06,
+        transparent: true,
+        opacity: 0.08,
+        side: THREE.FrontSide,
+    });
+    ROOT.add(new THREE.Mesh(coreGeo, skinMat));
+
+    // Inner deep green core
+    const innerMat = new THREE.MeshPhongMaterial({
+        color: HEX.forest,
+        emissive: HEX.forestM,
+        emissiveIntensity: 0.2,
+        transparent: true,
+        opacity: 0.55,
+        shininess: 40,
+    });
+    ROOT.add(new THREE.Mesh(new THREE.SphereGeometry(1.92, 64, 64), innerMat));
+
+    // ── ICOSPHERE WIREFRAME ──────────────────
+    // Fine mesh gives "digital earth" texture
+    const wfGeo = new THREE.IcosahedronGeometry(2.01, 6);
+    const wfMat = new THREE.MeshBasicMaterial({
+        color: HEX.sage,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.07,
+    });
+    ROOT.add(new THREE.Mesh(wfGeo, wfMat));
+
+    // ── LATITUDE / LONGITUDE LINES ───────────
+    function buildLatLon() {
+        const mat = new THREE.LineBasicMaterial({ color: HEX.sage, transparent: true, opacity: 0.18 });
+        const R   = 2.02;
+        const grp = new THREE.Group();
+
+        // Latitudes
+        [-60, -30, 0, 30, 60].forEach(latDeg => {
+            const lat = latDeg * Math.PI / 180;
+            const ry  = R * Math.sin(lat);
+            const rr  = R * Math.cos(lat);
+            const pts = [];
+            for (let i = 0; i <= 128; i++) {
+                const a = (i / 128) * Math.PI * 2;
+                pts.push(new THREE.Vector3(rr * Math.cos(a), ry, rr * Math.sin(a)));
+            }
+            grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat));
         });
-        if (found) {
-            tooltip.textContent = found.label;
-            const tx = Math.min(e.clientX + 16, window.innerWidth - 160);
-            tooltip.style.left = tx + 'px';
-            tooltip.style.top  = (e.clientY - 14) + 'px';
+
+        // Longitudes
+        for (let l = 0; l < 180; l += 30) {
+            const lon = l * Math.PI / 180;
+            const pts = [];
+            for (let i = 0; i <= 128; i++) {
+                const lat = (i / 128) * Math.PI - Math.PI / 2;
+                pts.push(new THREE.Vector3(
+                    R * Math.cos(lat) * Math.cos(lon),
+                    R * Math.sin(lat),
+                    R * Math.cos(lat) * Math.sin(lon)
+                ));
+            }
+            grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat));
+        }
+        return grp;
+    }
+    ROOT.add(buildLatLon());
+
+    // ── EQUATOR HIGHLIGHT ────────────────────
+    {
+        const pts = [];
+        for (let i = 0; i <= 256; i++) {
+            const a = (i / 256) * Math.PI * 2;
+            pts.push(new THREE.Vector3(2.025 * Math.cos(a), 0, 2.025 * Math.sin(a)));
+        }
+        ROOT.add(new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints(pts),
+            new THREE.LineBasicMaterial({ color: HEX.sage, transparent: true, opacity: 0.45 })
+        ));
+    }
+
+    // ── ORBIT RINGS (3 tilted rings) ─────────
+    function makeOrbitRing(radius, tiltX, tiltZ, opacity, dashed) {
+        const pts = [];
+        for (let i = 0; i <= 256; i++) {
+            const a = (i / 256) * Math.PI * 2;
+            pts.push(new THREE.Vector3(radius * Math.cos(a), 0, radius * Math.sin(a)));
+        }
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const mat = new THREE.LineBasicMaterial({ color: HEX.sage, transparent: true, opacity });
+        const ring = new THREE.Line(geo, mat);
+        ring.rotation.x = tiltX;
+        ring.rotation.z = tiltZ;
+        return ring;
+    }
+
+    const orbitA = makeOrbitRing(2.8,  0.4,  0.2, 0.20);
+    const orbitB = makeOrbitRing(3.15, -0.6, 0.4, 0.14);
+    const orbitC = makeOrbitRing(2.55,  1.1, -0.3, 0.10);
+    ORBITS.add(orbitA, orbitB, orbitC);
+
+    // ── AMBIENT PARTICLES ────────────────────
+    {
+        const N   = 700;
+        const pos = new Float32Array(N * 3);
+        for (let i = 0; i < N; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi   = Math.acos(2 * Math.random() - 1);
+            const r     = 2.4 + Math.random() * 2.2;
+            pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+            pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+            pos[i * 3 + 2] = r * Math.cos(phi);
+        }
+        const pGeo = new THREE.BufferGeometry();
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
+            color: HEX.sage, size: 0.018, transparent: true, opacity: 0.35,
+        })));
+    }
+
+    // ── CATEGORY NODE ICON BUILDER ───────────
+    function makeIcon(cfg) {
+        // cfg: { emoji, bg, ring, icon }
+        const S   = 128;
+        const cvs = document.createElement('canvas');
+        cvs.width = cvs.height = S;
+        const c   = cvs.getContext('2d');
+        const cx  = S / 2, cy = S / 2, R = S / 2 - 4;
+
+        // Shadow
+        c.shadowColor = 'rgba(0,30,10,0.55)';
+        c.shadowBlur  = 12;
+
+        // Background gradient — rich forest center to deep edge
+        const bg = c.createRadialGradient(cx - 6, cy - 6, 4, cx, cy, R);
+        bg.addColorStop(0, cfg.bg0 || '#005C30');
+        bg.addColorStop(1, cfg.bg1 || '#001F0E');
+        c.fillStyle = bg;
+        c.beginPath();
+        c.arc(cx, cy, R, 0, Math.PI * 2);
+        c.fill();
+
+        c.shadowBlur = 0;
+
+        // Gloss shine (top-left arc)
+        const shine = c.createRadialGradient(cx - 14, cy - 18, 2, cx - 6, cy - 10, R * 0.8);
+        shine.addColorStop(0, 'rgba(255,255,255,0.18)');
+        shine.addColorStop(0.5, 'rgba(255,255,255,0.04)');
+        shine.addColorStop(1, 'rgba(255,255,255,0)');
+        c.fillStyle = shine;
+        c.beginPath();
+        c.arc(cx, cy, R, 0, Math.PI * 2);
+        c.fill();
+
+        // Outer sage ring
+        c.strokeStyle = 'rgba(196,218,132,0.90)';
+        c.lineWidth = 3;
+        c.beginPath();
+        c.arc(cx, cy, R - 1, 0, Math.PI * 2);
+        c.stroke();
+
+        // Inner faint ring
+        c.strokeStyle = 'rgba(196,218,132,0.22)';
+        c.lineWidth = 1.2;
+        c.beginPath();
+        c.arc(cx, cy, R - 9, 0, Math.PI * 2);
+        c.stroke();
+
+        // Draw the icon (SVG-path style with canvas)
+        c.strokeStyle = '#FFFFFF';
+        c.fillStyle   = '#FFFFFF';
+        c.lineWidth   = 3.5;
+        c.lineCap     = 'round';
+        c.lineJoin    = 'round';
+
+        cfg.draw(c, cx, cy);
+
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        return tex;
+    }
+
+    // ── CATEGORY DEFINITIONS ─────────────────
+    const CATEGORIES = [
+        {
+            label: '🌿 Organic',
+            pos:   [1.25,  0.90,  1.10],
+            phase: 0.0,
+            draw(c, cx, cy) {
+                // Beautiful leaf with veins
+                c.beginPath();
+                c.moveTo(cx, cy - 22);
+                c.bezierCurveTo(cx + 22, cy - 18, cx + 22, cy + 12, cx, cy + 24);
+                c.bezierCurveTo(cx - 22, cy + 12, cx - 22, cy - 18, cx, cy - 22);
+                c.stroke();
+                // midrib
+                c.beginPath();
+                c.moveTo(cx, cy - 22); c.lineTo(cx, cy + 24); c.stroke();
+                // veins
+                [[cx, cy - 6, cx - 16, cy - 14], [cx, cy + 2, cx - 16, cy - 4],
+                 [cx, cy - 6, cx + 16, cy - 14], [cx, cy + 2, cx + 16, cy - 4]].forEach(([x1,y1,x2,y2]) => {
+                    c.beginPath(); c.moveTo(x1,y1); c.quadraticCurveTo((x1+x2)/2, (y1+y2)/2-4, x2, y2); c.stroke();
+                });
+            }
+        },
+        {
+            label: '🥑 Keto-Friendly',
+            pos:   [-1.30,  0.65,  1.20],
+            phase: 0.65,
+            draw(c, cx, cy) {
+                // Avocado pear shape
+                c.beginPath();
+                c.moveTo(cx, cy - 24);
+                c.bezierCurveTo(cx + 18, cy - 20, cx + 20, cy + 4, cx + 12, cy + 18);
+                c.bezierCurveTo(cx + 5,  cy + 26, cx - 5, cy + 26, cx - 12, cy + 18);
+                c.bezierCurveTo(cx - 20, cy + 4, cx - 18, cy - 20, cx, cy - 24);
+                c.stroke();
+                // inner flesh ring
+                c.strokeStyle = 'rgba(196,218,132,0.7)';
+                c.lineWidth = 2;
+                c.beginPath();
+                c.ellipse(cx, cy + 4, 10, 13, 0, 0, Math.PI * 2);
+                c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+                // pit
+                c.fillStyle = '#FFFFFF';
+                c.beginPath();
+                c.arc(cx, cy + 7, 5.5, 0, Math.PI * 2);
+                c.fill();
+                // stem
+                c.beginPath(); c.moveTo(cx, cy - 24); c.lineTo(cx, cy - 30); c.stroke();
+            }
+        },
+        {
+            label: '🌾 Gluten-Free',
+            pos:   [0.40,  1.50, -0.55],
+            phase: 1.3,
+            draw(c, cx, cy) {
+                // Wheat stalk
+                c.beginPath(); c.moveTo(cx, cy + 26); c.lineTo(cx, cy - 14); c.stroke();
+                // grain pods
+                const grains = [[cx-11, cy-2, -0.45], [cx+11, cy-8, 0.45], [cx-11, cy-14, -0.45]];
+                grains.forEach(([x, y, rot]) => {
+                    c.save(); c.translate(x, y); c.rotate(rot);
+                    c.beginPath(); c.ellipse(0, 0, 8, 5, 0, 0, Math.PI * 2);
+                    c.stroke(); c.restore();
+                });
+                // GF cross badge (bottom right)
+                c.strokeStyle = '#C4DA84'; c.lineWidth = 2.5;
+                c.beginPath(); c.moveTo(cx + 10, cy + 12); c.lineTo(cx + 22, cy + 24); c.stroke();
+                c.beginPath(); c.moveTo(cx + 22, cy + 12); c.lineTo(cx + 10, cy + 24); c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+            }
+        },
+        {
+            label: '🥗 Low-Carb Options',
+            pos:   [-0.90, -0.95,  1.25],
+            phase: 1.95,
+            draw(c, cx, cy) {
+                // Bowl
+                c.beginPath();
+                c.moveTo(cx - 22, cy + 2);
+                c.bezierCurveTo(cx - 22, cy + 28, cx + 22, cy + 28, cx + 22, cy + 2);
+                c.stroke();
+                // rim
+                c.beginPath(); c.moveTo(cx - 24, cy + 2); c.lineTo(cx + 24, cy + 2); c.stroke();
+                // leafy greens inside
+                c.strokeStyle = 'rgba(196,218,132,0.8)'; c.lineWidth = 2.5;
+                c.beginPath(); c.ellipse(cx - 8, cy - 6, 9, 5, -0.5, 0, Math.PI * 2); c.stroke();
+                c.beginPath(); c.ellipse(cx + 8, cy - 8, 9, 5, 0.5, 0, Math.PI * 2); c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+                // centre veg strip
+                c.beginPath(); c.ellipse(cx, cy - 4, 6, 10, 0, 0, Math.PI * 2); c.stroke();
+                // fork
+                c.beginPath(); c.moveTo(cx + 18, cy - 20); c.lineTo(cx + 18, cy + 2); c.stroke();
+                c.beginPath(); c.moveTo(cx + 15, cy - 20); c.lineTo(cx + 15, cy - 12); c.stroke();
+                c.beginPath(); c.moveTo(cx + 21, cy - 20); c.lineTo(cx + 21, cy - 12); c.stroke();
+            }
+        },
+        {
+            label: '🍫 Chocolate & Treats',
+            pos:   [1.10, -1.20, -0.80],
+            phase: 2.6,
+            draw(c, cx, cy) {
+                // Chocolate bar
+                c.beginPath();
+                c.roundRect(cx - 20, cy - 18, 40, 36, 6);
+                c.stroke();
+                // segments grid
+                c.lineWidth = 2;
+                c.beginPath(); c.moveTo(cx, cy - 18); c.lineTo(cx, cy + 18); c.stroke();
+                c.beginPath(); c.moveTo(cx - 20, cy - 4); c.lineTo(cx + 20, cy - 4); c.stroke();
+                c.beginPath(); c.moveTo(cx - 20, cy + 9); c.lineTo(cx + 20, cy + 9); c.stroke();
+                c.lineWidth = 3.5;
+                // cocoa bean accent
+                c.fillStyle = '#C4DA84';
+                c.beginPath();
+                c.ellipse(cx - 10, cy - 11, 4, 5.5, 0.3, 0, Math.PI * 2);
+                c.fill();
+                c.beginPath();
+                c.ellipse(cx + 10, cy - 11, 4, 5.5, -0.3, 0, Math.PI * 2);
+                c.fill();
+                c.fillStyle = '#FFFFFF';
+                // melting drip
+                c.beginPath();
+                c.moveTo(cx - 6, cy + 18);
+                c.bezierCurveTo(cx - 6, cy + 24, cx - 2, cy + 28, cx - 1, cy + 28);
+                c.bezierCurveTo(cx, cy + 28, cx + 4, cy + 24, cx + 4, cy + 18);
+                c.fill();
+            }
+        },
+        {
+            label: '🥜 Healthy Snacks',
+            pos:   [-1.35,  1.05, -0.50],
+            phase: 3.25,
+            draw(c, cx, cy) {
+                // Peanut double-lobe
+                c.beginPath();
+                c.ellipse(cx - 11, cy - 2, 10, 14, 0, 0, Math.PI * 2);
+                c.stroke();
+                c.beginPath();
+                c.ellipse(cx + 11, cy - 2, 10, 14, 0, 0, Math.PI * 2);
+                c.stroke();
+                // waist
+                c.lineWidth = 2.5;
+                c.beginPath(); c.moveTo(cx - 3, cy - 8); c.lineTo(cx + 3, cy - 8); c.stroke();
+                c.beginPath(); c.moveTo(cx - 3, cy + 4); c.lineTo(cx + 3, cy + 4); c.stroke();
+                c.lineWidth = 3.5;
+                // texture marks
+                c.strokeStyle = 'rgba(196,218,132,0.75)'; c.lineWidth = 2;
+                [[-13,-6],[-9,4],[11,-6],[15,4]].forEach(([dx,dy]) => {
+                    c.beginPath(); c.moveTo(cx+dx-3, cy+dy); c.lineTo(cx+dx+3, cy+dy); c.stroke();
+                });
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+            }
+        },
+        {
+            label: '❤️ Heart Health',
+            pos:   [0.20,  0.30,  1.95],
+            phase: 3.9,
+            draw(c, cx, cy) {
+                c.beginPath();
+                c.moveTo(cx, cy + 18);
+                c.bezierCurveTo(cx - 22, cy + 6, cx - 24, cy - 10, cx - 12, cy - 16);
+                c.bezierCurveTo(cx - 5, cy - 20, cx, cy - 12, cx, cy - 12);
+                c.bezierCurveTo(cx, cy - 12, cx + 5, cy - 20, cx + 12, cy - 16);
+                c.bezierCurveTo(cx + 24, cy - 10, cx + 22, cy + 6, cx, cy + 18);
+                c.fill();
+                // EKG line through
+                c.strokeStyle = '#003D1F'; c.lineWidth = 2.5;
+                c.beginPath();
+                c.moveTo(cx - 14, cy + 4);
+                c.lineTo(cx - 6,  cy + 4);
+                c.lineTo(cx - 2,  cy - 6);
+                c.lineTo(cx + 2,  cy + 12);
+                c.lineTo(cx + 6,  cy - 2);
+                c.lineTo(cx + 10, cy + 4);
+                c.lineTo(cx + 16, cy + 4);
+                c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+            }
+        },
+        {
+            label: '💊 Supplements',
+            pos:   [-0.40, -1.50, -0.90],
+            phase: 4.55,
+            draw(c, cx, cy) {
+                // Capsule pill
+                c.save(); c.translate(cx, cy); c.rotate(-0.4);
+                c.beginPath();
+                c.moveTo(-16, -8); c.arc(-8, 0, 8, Math.PI * 1.5, Math.PI * 0.5, true);
+                c.lineTo(8, 8);   c.arc(8, 0, 8, Math.PI * 0.5, Math.PI * 1.5, true);
+                c.closePath(); c.stroke();
+                c.beginPath(); c.moveTo(-16, 0); c.lineTo(16, 0); c.stroke();
+                // left half fill
+                c.fillStyle = 'rgba(196,218,132,0.6)';
+                c.beginPath();
+                c.moveTo(-16, 0); c.arc(-8, 0, 8, Math.PI * 1.5, Math.PI * 0.5, true);
+                c.lineTo(-16, 0);
+                c.fill(); c.restore();
+                // dots
+                c.fillStyle = '#FFFFFF';
+                [[cx + 10, cy - 18],[cx + 18, cy - 10],[cx + 20, cy + 2]].forEach(([x,y]) => {
+                    c.beginPath(); c.arc(x, y, 2.5, 0, Math.PI * 2); c.fill();
+                });
+            }
+        },
+        {
+            label: '🌱 Plant-Based',
+            pos:   [-0.50, -0.40, -1.95],
+            phase: 5.2,
+            draw(c, cx, cy) {
+                // Potted sprout
+                c.beginPath(); c.moveTo(cx, cy + 10); c.lineTo(cx, cy - 12); c.stroke();
+                // left leaf
+                c.beginPath();
+                c.moveTo(cx, cy - 4);
+                c.bezierCurveTo(cx - 6, cy - 16, cx - 18, cy - 16, cx - 18, cy - 8);
+                c.bezierCurveTo(cx - 18, cy, cx - 6, cy + 2, cx, cy - 4);
+                c.stroke();
+                // right leaf
+                c.beginPath();
+                c.moveTo(cx, cy - 10);
+                c.bezierCurveTo(cx + 6, cy - 22, cx + 18, cy - 22, cx + 18, cy - 14);
+                c.bezierCurveTo(cx + 18, cy - 6, cx + 6, cy - 4, cx, cy - 10);
+                c.stroke();
+                // pot
+                c.beginPath();
+                c.moveTo(cx - 16, cy + 10); c.lineTo(cx + 16, cy + 10);
+                c.lineTo(cx + 12, cy + 26); c.lineTo(cx - 12, cy + 26); c.closePath();
+                c.stroke();
+                c.strokeStyle = 'rgba(196,218,132,0.6)'; c.lineWidth = 2;
+                c.beginPath(); c.moveTo(cx - 15, cy + 14); c.lineTo(cx + 15, cy + 14); c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+            }
+        },
+        {
+            label: '⚡ Vitality Boost',
+            pos:   [1.60, -0.50,  0.90],
+            phase: 5.85,
+            draw(c, cx, cy) {
+                // Lightning bolt
+                c.beginPath();
+                c.moveTo(cx + 8, cy - 24);
+                c.lineTo(cx - 4, cy - 2);
+                c.lineTo(cx + 6, cy - 2);
+                c.lineTo(cx - 8, cy + 24);
+                c.lineTo(cx + 4, cy + 2);
+                c.lineTo(cx - 6, cy + 2);
+                c.closePath();
+                c.fill();
+                // glow ring
+                c.strokeStyle = 'rgba(196,218,132,0.55)'; c.lineWidth = 2;
+                c.beginPath(); c.arc(cx, cy, 28, 0, Math.PI * 2); c.stroke();
+                c.strokeStyle = '#FFFFFF'; c.lineWidth = 3.5;
+            }
+        },
+        {
+            label: '🛡 Wellness',
+            pos:   [-1.50,  0.20,  1.10],
+            phase: 6.5,
+            draw(c, cx, cy) {
+                // Shield
+                c.beginPath();
+                c.moveTo(cx, cy - 24);
+                c.lineTo(cx + 20, cy - 14);
+                c.lineTo(cx + 20, cy + 4);
+                c.quadraticCurveTo(cx + 20, cy + 20, cx, cy + 28);
+                c.quadraticCurveTo(cx - 20, cy + 20, cx - 20, cy + 4);
+                c.lineTo(cx - 20, cy - 14);
+                c.closePath();
+                c.stroke();
+                // inner checkmark
+                c.lineWidth = 3;
+                c.beginPath();
+                c.moveTo(cx - 10, cy + 4);
+                c.lineTo(cx - 2,  cy + 13);
+                c.lineTo(cx + 12, cy - 8);
+                c.stroke();
+                c.lineWidth = 3.5;
+                // sage fill hint
+                c.fillStyle = 'rgba(196,218,132,0.12)';
+                c.beginPath();
+                c.moveTo(cx, cy - 24);
+                c.lineTo(cx + 20, cy - 14); c.lineTo(cx + 20, cy + 4);
+                c.quadraticCurveTo(cx + 20, cy + 20, cx, cy + 28);
+                c.quadraticCurveTo(cx - 20, cy + 20, cx - 20, cy + 4);
+                c.lineTo(cx - 20, cy - 14);
+                c.closePath();
+                c.fill();
+                c.fillStyle = '#FFFFFF';
+            }
+        },
+        {
+            label: '🍃 Natural Products',
+            pos:   [0.80,  1.50,  0.90],
+            phase: 7.15,
+            draw(c, cx, cy) {
+                // Two overlapping leaves
+                c.save(); c.translate(cx, cy);
+                c.rotate(-0.3);
+                c.beginPath();
+                c.moveTo(0, -22);
+                c.bezierCurveTo(-16, -18, -18, 8, 0, 20);
+                c.bezierCurveTo(2, 10, 2, -10, 0, -22);
+                c.stroke();
+                c.beginPath();
+                c.moveTo(0, -22); c.lineTo(0, 20); c.stroke();
+                c.restore();
+                c.save(); c.translate(cx, cy); c.rotate(0.3);
+                c.beginPath();
+                c.moveTo(0, -22);
+                c.bezierCurveTo(16, -18, 18, 8, 0, 20);
+                c.bezierCurveTo(-2, 10, -2, -10, 0, -22);
+                c.stroke();
+                c.beginPath();
+                c.moveTo(0, -22); c.lineTo(0, 20); c.stroke();
+                c.restore();
+                // stem
+                c.beginPath(); c.moveTo(cx, cy + 20); c.lineTo(cx, cy + 28); c.stroke();
+            }
+        },
+    ];
+
+    // ── Build nodes ──────────────────────────
+    const nodeSprites = [];
+
+    CATEGORIES.forEach((cat, i) => {
+        const pos = new THREE.Vector3(...cat.pos);
+
+        // Sprite
+        const tex    = makeIcon(cat);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+            map: tex, transparent: true, opacity: 1.0,
+        }));
+        sprite.position.copy(pos);
+        sprite.scale.set(0.52, 0.52, 0.52);
+        sprite.userData.label = cat.label;
+        ROOT.add(sprite);
+        nodeSprites.push(sprite);
+
+        // Pulse ring
+        const rGeo = new THREE.RingGeometry(0.20, 0.265, 40);
+        const rMat = new THREE.MeshBasicMaterial({ color: HEX.sage, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+        const ring  = new THREE.Mesh(rGeo, rMat);
+        ring.position.copy(pos);
+        ring.lookAt(0, 0, 0);
+        ROOT.add(ring);
+
+        // Outer halo
+        const hGeo = new THREE.RingGeometry(0.31, 0.37, 40);
+        const hMat = new THREE.MeshBasicMaterial({ color: HEX.sage, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+        const halo  = new THREE.Mesh(hGeo, hMat);
+        halo.position.copy(pos);
+        halo.lookAt(0, 0, 0);
+        ROOT.add(halo);
+
+        // Connection line to surface
+        {
+            const dir    = pos.clone().normalize();
+            const start  = dir.clone().multiplyScalar(2.02);
+            const end    = pos.clone();
+            const lGeo   = new THREE.BufferGeometry().setFromPoints([start, end]);
+            const lMat   = new THREE.LineBasicMaterial({ color: HEX.sage, transparent: true, opacity: 0.3 });
+            ROOT.add(new THREE.Line(lGeo, lMat));
+        }
+
+        cat._ring  = ring;
+        cat._halo  = halo;
+        cat._phase = cat.phase;
+    });
+
+    // ── LIGHTS ───────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    keyLight.position.set(6, 6, 8);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(HEX.sage, 0.35);
+    fillLight.position.set(-6, -4, 4);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(HEX.sage, 0.25);
+    rimLight.position.set(0, 8, -6);
+    scene.add(rimLight);
+
+    // ── RAYCASTER / TOOLTIP ──────────────────
+    const raycaster = new THREE.Raycaster();
+    const mouse2d   = new THREE.Vector2();
+
+    renderer.domElement.addEventListener('mousemove', e => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse2d.x  =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+        mouse2d.y  = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse2d, camera);
+        const hits = raycaster.intersectObjects(nodeSprites);
+        if (hits.length) {
+            tooltip.textContent   = hits[0].object.userData.label;
+            tooltip.style.left    = (e.clientX + 18) + 'px';
+            tooltip.style.top     = (e.clientY - 14) + 'px';
             tooltip.style.opacity = '1';
         } else {
             tooltip.style.opacity = '0';
         }
     });
-    canvas.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
+    renderer.domElement.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
 
-    // ── Draw the dark sphere background ──
-    function drawSphere() {
-        // Deep dark sphere fill — like the reference image
-        const g = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.22, R * 0.05, cx, cy, R);
-        g.addColorStop(0,   'rgba(0, 28, 14, 0.96)');
-        g.addColorStop(0.5, 'rgba(0, 20, 10, 0.97)');
-        g.addColorStop(1,   'rgba(0, 10, 5,  0.98)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
+    // ── DRAG INTERACTION ─────────────────────
+    let dragging = false;
+    let px = 0, py = 0;
+    let vx = 0, vy = 0;
+    const AUTO = 0.0004;
 
-        // Soft green rim glow
-        const rim = ctx.createRadialGradient(cx, cy, R * 0.75, cx, cy, R * 1.05);
-        rim.addColorStop(0,   'transparent');
-        rim.addColorStop(0.7, 'rgba(0, 71, 35, 0.08)');
-        rim.addColorStop(1,   'rgba(196,218,132, 0.12)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R * 1.05, 0, Math.PI * 2);
-        ctx.fillStyle = rim;
-        ctx.fill();
+    const dn = (x, y) => { dragging = true; px = x; py = y; };
+    const mv = (x, y) => {
+        if (!dragging) return;
+        const dx = x - px, dy = y - py;
+        vx = dx * 0.0004; vy = dy * 0.0004;
+        ROOT.rotation.y += dx * 0.004;
+        ROOT.rotation.x += dy * 0.004;
+        px = x; py = y;
+    };
+    const up = () => { dragging = false; };
 
-        // Edge ring
-        const edgeG = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-        edgeG.addColorStop(0,   'rgba(196,218,132, 0.22)');
-        edgeG.addColorStop(0.5, 'rgba(0, 71, 35,   0.15)');
-        edgeG.addColorStop(1,   'rgba(0, 20, 10,   0.20)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.strokeStyle = edgeG;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+    container.addEventListener('mousedown',  e => dn(e.clientX, e.clientY));
+    container.addEventListener('mousemove',  e => mv(e.clientX, e.clientY));
+    container.addEventListener('mouseup',    up);
+    container.addEventListener('mouseleave', up);
+    container.addEventListener('touchstart', e => dn(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+    container.addEventListener('touchmove',  e => { e.preventDefault(); mv(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    container.addEventListener('touchend',   up);
 
-        // Specular top-left highlight
-        const spec = ctx.createRadialGradient(cx - R * 0.30, cy - R * 0.28, 0, cx - R * 0.26, cy - R * 0.22, R * 0.42);
-        spec.addColorStop(0,   'rgba(196,218,132, 0.10)');
-        spec.addColorStop(0.5, 'rgba(196,218,132, 0.03)');
-        spec.addColorStop(1,   'transparent');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.fillStyle = spec;
-        ctx.fill();
-    }
+    // ── ANIMATION LOOP ───────────────────────
+    function animate() {
+        requestAnimationFrame(animate);
+        const t = Date.now() * 0.001;
 
-    // ── Clip to sphere ──
-    function clipToSphere() {
-        ctx.beginPath();
-        ctx.arc(cx, cy, R - 0.5, 0, Math.PI * 2);
-        ctx.clip();
-    }
-
-    // ── Draw lat/lon grid — very faint ──
-    function drawGrid() {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(0, 71, 35, 0.18)';
-        ctx.lineWidth = 0.5;
-        ctx.setLineDash([3, 8]);
-        for (let lat = -80; lat <= 80; lat += 20) {
-            ctx.beginPath();
-            for (let lon = -180; lon <= 180; lon += 3) {
-                const p = project(lat, lon);
-                if (!p.v) continue;
-                lon === -180 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-            }
-            ctx.stroke();
-        }
-        for (let lon = -180; lon < 180; lon += 30) {
-            ctx.beginPath();
-            for (let lat = -90; lat <= 90; lat += 3) {
-                const p = project(lat, lon);
-                if (!p.v) continue;
-                lat === -90 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-            }
-            ctx.stroke();
-        }
-        ctx.restore();
-    }
-
-    // ── Draw continent outlines ──
-    function drawConts() {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(196, 218, 132, 0.30)';
-        ctx.lineWidth = 1.0;
-        ctx.lineJoin = 'round';
-        ctx.lineCap  = 'round';
-        ctx.setLineDash([]);
-        CONTS.forEach(shape => {
-            ctx.beginPath();
-            let lv = false;
-            shape.forEach(([lat, lon]) => {
-                const p = project(lat, lon);
-                if (p.v) { !lv ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); lv = true; }
-                else lv = false;
-            });
-            ctx.stroke();
-        });
-        ctx.restore();
-    }
-
-    // ── Draw scatter dots (constellation feel) ──
-    function drawDots() {
-        ctx.save();
-        DOTS.forEach(d => {
-            const p = project(d.lat, d.lon);
-            if (!p.v) return;
-            // Fade dots near edge
-            const fadeAlpha = Math.min(1, (p.z + 0.05) * 3);
-            ctx.globalAlpha = fadeAlpha;
-            ctx.fillStyle = d.col;
-            if (d.shape === 'sq') {
-                const s = d.size * 1.1;
-                ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
-            } else {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, d.size * 0.75, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        });
-        ctx.globalAlpha = 1;
-        ctx.restore();
-    }
-
-    // ── Draw connection lines between nodes ──
-    function drawConnections(t) {
-        ctx.save();
-        ctx.setLineDash([4, 8]);
-        for (let i = 0; i < NODES.length; i++) {
-            for (let j = i + 1; j < NODES.length; j++) {
-                const a = NODES[i], b = NODES[j];
-                if (!a.p?.v || !b.p?.v) continue;
-                if (a.p.z < 0.05 || b.p.z < 0.05) continue;
-                const dx = a.p.x - b.p.x, dy = a.p.y - b.p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > R * 0.85) continue;
-                const base = (1 - dist / (R * 0.85)) * 0.22;
-                const pulse = base * (0.7 + Math.sin(t * 0.6 + i * 0.8 + j * 0.5) * 0.3);
-                ctx.beginPath();
-                ctx.moveTo(a.p.x, a.p.y);
-                ctx.lineTo(b.p.x, b.p.y);
-                ctx.strokeStyle = `rgba(196,218,132,${pulse.toFixed(3)})`;
-                ctx.lineWidth = 0.65;
-                ctx.stroke();
-            }
-        }
-        ctx.restore();
-    }
-
-    // ── Draw planet-style nodes ──
-    function drawNodes(t) {
-        NODES.forEach(n => {
-            const p = project(n.lat, n.lon);
-            n.p = p;
-            if (!p.v || p.z < 0.04) return;
-
-            const alpha = Math.min(1, (p.z - 0.04) * 4);
-            const pulse = 1 + Math.sin(t * 1.8 + n.lat * 0.15) * 0.06;
-
-            ctx.save();
-            ctx.globalAlpha = alpha;
-
-            // Outer glow halo
-            const haloR = (n.r + 10) * pulse;
-            const halo = ctx.createRadialGradient(p.x, p.y, n.r * 0.5, p.x, p.y, haloR * 1.6);
-            halo.addColorStop(0,   n.glow.replace(')', ', 0.5)').replace('rgba(', 'rgba(').replace(/,\s*[\d.]+\)$/, `, ${(0.28 * alpha).toFixed(2)})`));
-            halo.addColorStop(0.5, n.glow.replace(/,\s*[\d.]+\)$/, ', 0.08)'));
-            halo.addColorStop(1,   'transparent');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, haloR * 1.6, 0, Math.PI * 2);
-            ctx.fillStyle = halo;
-            ctx.fill();
-
-            // Outer ring (like the reference image)
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, (n.r + 5) * pulse, 0, Math.PI * 2);
-            ctx.strokeStyle = n.ring;
-            ctx.lineWidth = 2.5;
-            ctx.globalAlpha = alpha * 0.55;
-            ctx.stroke();
-
-            // Mid ring
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, (n.r + 1) * pulse, 0, Math.PI * 2);
-            ctx.strokeStyle = n.ring;
-            ctx.lineWidth = 1.5;
-            ctx.globalAlpha = alpha * 0.85;
-            ctx.stroke();
-
-            // Planet body
-            const bodyG = ctx.createRadialGradient(
-                p.x - n.r * 0.3, p.y - n.r * 0.3, n.r * 0.05,
-                p.x, p.y, n.r * pulse
-            );
-            bodyG.addColorStop(0,   lighten(n.fill, 0.25));
-            bodyG.addColorStop(0.5, n.fill);
-            bodyG.addColorStop(1,   darken(n.fill, 0.35));
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, n.r * pulse, 0, Math.PI * 2);
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = bodyG;
-            ctx.fill();
-
-            // Specular shine on planet
-            const shine = ctx.createRadialGradient(
-                p.x - n.r * 0.28, p.y - n.r * 0.28, 0,
-                p.x - n.r * 0.2,  p.y - n.r * 0.2,  n.r * 0.55
-            );
-            shine.addColorStop(0,   'rgba(255,255,255,0.28)');
-            shine.addColorStop(0.6, 'rgba(255,255,255,0.06)');
-            shine.addColorStop(1,   'transparent');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, n.r * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = shine;
-            ctx.fill();
-
-            ctx.restore();
-        });
-    }
-
-    // ── Color helpers ──
-    function hexToRgb(hex) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return [r, g, b];
-    }
-    function lighten(hex, amt) {
-        const [r, g, b] = hexToRgb(hex);
-        return `rgb(${Math.min(255, Math.round(r + (255 - r) * amt))},${Math.min(255, Math.round(g + (255 - g) * amt))},${Math.min(255, Math.round(b + (255 - b) * amt))})`;
-    }
-    function darken(hex, amt) {
-        const [r, g, b] = hexToRgb(hex);
-        return `rgb(${Math.round(r * (1 - amt))},${Math.round(g * (1 - amt))},${Math.round(b * (1 - amt))})`;
-    }
-
-    // ── Outer ambient glow ring around globe ──
-    function drawAmbient() {
-        const g = ctx.createRadialGradient(cx, cy, R * 0.88, cx, cy, R * 1.45);
-        g.addColorStop(0,   'transparent');
-        g.addColorStop(0.4, 'rgba(0, 71, 35, 0.07)');
-        g.addColorStop(0.8, 'rgba(196,218,132, 0.06)');
-        g.addColorStop(1,   'transparent');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R * 1.45, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
-    }
-
-    // ── Animation loop ──
-    function draw(ts) {
-        requestAnimationFrame(draw);
-        const t = ts * 0.001;
-
-        if (auto && !dragging) {
-            rotY += 0.0016;
-        }
         if (!dragging) {
-            velX *= 0.90;
-            velY *= 0.90;
+            ROOT.rotation.y += AUTO + vx;
+            ROOT.rotation.x += vy;
+            vx *= 0.93; vy *= 0.93;
         }
 
-        ctx.clearRect(0, 0, W, H);
+        // Orbit rings counter-rotate (stay static in world space)
+        ORBITS.rotation.y -= AUTO * 0.3;
 
-        drawAmbient();
+        // Node pulse
+        CATEGORIES.forEach(cat => {
+            const s = 1 + Math.sin(t * 1.6 + cat._phase) * 0.12;
+            if (cat._ring) cat._ring.scale.set(s, s, s);
+            if (cat._halo) {
+                const hs = 1 + Math.sin(t * 1.6 + cat._phase + 0.5) * 0.18;
+                cat._halo.scale.set(hs, hs, hs);
+                cat._halo.material.opacity = 0.08 + Math.abs(Math.sin(t + cat._phase)) * 0.14;
+            }
+        });
 
-        ctx.save();
-        drawSphere();
-        ctx.restore();
-
-        // Clip everything inside to sphere
-        ctx.save();
-        clipToSphere();
-        drawGrid();
-        drawConts();
-        drawDots();
-        drawConnections(t);
-        ctx.restore();
-
-        // Nodes drawn outside clip so rings can bleed slightly
-        drawNodes(t);
+        renderer.render(scene, camera);
     }
-    requestAnimationFrame(draw);
+    animate();
+
+    // ── RESIZE ──────────────────────────────
+    window.addEventListener('resize', () => {
+        const w = container.offsetWidth, h = container.offsetHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+    }, { passive: true });
+
 })();
