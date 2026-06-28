@@ -1,27 +1,45 @@
 // ============================================
+// NAVBAR — SCROLL EFFECT
+// ============================================
+const navbar = document.getElementById('navbar');
+if (navbar) {
+    const onScroll = () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 20);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+}
+
+// ============================================
 // MOBILE MENU TOGGLE
 // ============================================
 function toggleMenu() {
     const navLinks = document.getElementById('navLinks');
+    const toggle   = document.querySelector('.menu-toggle');
+    if (!navLinks || !toggle) return;
     navLinks.classList.toggle('active');
+    toggle.classList.toggle('open');
 }
 
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
-        document.getElementById('navLinks').classList.remove('active');
+        const navLinks = document.getElementById('navLinks');
+        const toggle   = document.querySelector('.menu-toggle');
+        navLinks?.classList.remove('active');
+        toggle?.classList.remove('open');
     });
 });
 
 // ============================================
-// 3D WELLNESS GLOBE - Dr Dammies Style
+// 3D WELLNESS GLOBE
 // ============================================
-(function() {
+(function () {
     const container = document.getElementById('globe-container');
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-    camera.position.z = 5.5;
+    // ---- Scene ----
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.PerspectiveCamera(42, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+    camera.position.z = 5.8;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -31,395 +49,282 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     const globeGroup = new THREE.Group();
     scene.add(globeGroup);
 
-    // --- COLORS ---
-    const DEEP_GREEN = 0x004723;
-    const SOFT_GREEN = 0xC4DA84;
-    const WHITE = 0xFFFFFF;
+    // ---- Colors ----
+    const C_FOREST = 0x004723;
+    const C_SAGE   = 0xC4DA84;
+    const C_WHITE  = 0xFFFFFF;
 
-    // --- Main Wireframe Sphere (dense, like your upload) ---
-    const sphereGeometry = new THREE.IcosahedronGeometry(2, 4);
-    const wireframeMaterial = new THREE.MeshBasicMaterial({
-        color: DEEP_GREEN,
+    // ---- Core Wireframe ----
+    const coreGeo = new THREE.IcosahedronGeometry(2, 5);
+    const coreMat = new THREE.MeshBasicMaterial({
+        color: C_FOREST,
         wireframe: true,
         transparent: true,
-        opacity: 0.18
+        opacity: 0.14
     });
-    const wireframeSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
-    globeGroup.add(wireframeSphere);
+    globeGroup.add(new THREE.Mesh(coreGeo, coreMat));
 
-    // --- Inner Glow Sphere ---
-    const glowGeometry = new THREE.IcosahedronGeometry(1.98, 5);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-        color: SOFT_GREEN,
+    // ---- Inner glow ----
+    const innerGeo = new THREE.SphereGeometry(1.97, 32, 32);
+    const innerMat = new THREE.MeshBasicMaterial({
+        color: C_SAGE,
         transparent: true,
-        opacity: 0.04
+        opacity: 0.05
     });
-    const glowSphere = new THREE.Mesh(glowGeometry, glowMaterial);
-    globeGroup.add(glowSphere);
+    globeGroup.add(new THREE.Mesh(innerGeo, innerMat));
 
-    // --- Outer faint wireframe (for depth) ---
-    const outerGeometry = new THREE.IcosahedronGeometry(2.4, 2);
-    const outerMaterial = new THREE.MeshBasicMaterial({
-        color: SOFT_GREEN,
+    // ---- Outer halo ----
+    const outerGeo = new THREE.IcosahedronGeometry(2.45, 2);
+    const outerMat = new THREE.MeshBasicMaterial({
+        color: C_SAGE,
         wireframe: true,
         transparent: true,
-        opacity: 0.06
+        opacity: 0.05
     });
-    const outerSphere = new THREE.Mesh(outerGeometry, outerMaterial);
+    const outerSphere = new THREE.Mesh(outerGeo, outerMat);
     globeGroup.add(outerSphere);
 
-    // --- Connection Lines (organic network feel) ---
-    const lineMaterial = new THREE.LineBasicMaterial({
-        color: SOFT_GREEN,
-        transparent: true,
-        opacity: 0.2
-    });
+    // ---- Latitude / Longitude rings ----
+    const ringMat = new THREE.LineBasicMaterial({ color: C_SAGE, transparent: true, opacity: 0.18 });
 
-    const vertices = sphereGeometry.attributes.position.array;
-    for (let i = 0; i < vertices.length; i += 15) {
-        if (i + 6 < vertices.length) {
-            const points = [];
-            points.push(new THREE.Vector3(vertices[i], vertices[i+1], vertices[i+2]));
-            points.push(new THREE.Vector3(vertices[i+3], vertices[i+4], vertices[i+5]));
-            const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            globeGroup.add(line);
+    function makeLatRing(lat, radius = 2.01) {
+        const r = radius * Math.cos(lat);
+        const y = radius * Math.sin(lat);
+        const pts = [];
+        for (let i = 0; i <= 128; i++) {
+            const a = (i / 128) * Math.PI * 2;
+            pts.push(new THREE.Vector3(r * Math.cos(a), y, r * Math.sin(a)));
         }
+        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), ringMat);
     }
 
-    // --- Floating Particles (many, small, subtle) ---
-    const particleCount = 500;
-    const particleGeometry = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-    
-    for (let i = 0; i < particleCount * 3; i += 3) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const r = 2.2 + Math.random() * 1.5;
-        
-        particlePositions[i] = r * Math.sin(phi) * Math.cos(theta);
-        particlePositions[i+1] = r * Math.sin(phi) * Math.sin(theta);
-        particlePositions[i+2] = r * Math.cos(phi);
+    function makeLonRing(lon, radius = 2.01) {
+        const pts = [];
+        for (let i = 0; i <= 128; i++) {
+            const lat = (i / 128) * Math.PI - Math.PI / 2;
+            pts.push(new THREE.Vector3(
+                radius * Math.cos(lat) * Math.cos(lon),
+                radius * Math.sin(lat),
+                radius * Math.cos(lat) * Math.sin(lon)
+            ));
+        }
+        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), ringMat);
     }
-    
-    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    
-    const particleMaterial = new THREE.PointsMaterial({
-        color: SOFT_GREEN,
-        size: 0.018,
-        transparent: true,
-        opacity: 0.4
-    });
-    
-    const particles = new THREE.Points(particleGeometry, particleMaterial);
+
+    [-60, -30, 0, 30, 60].forEach(d => globeGroup.add(makeLatRing(d * Math.PI / 180)));
+    [0, 45, 90, 135].forEach(d => globeGroup.add(makeLonRing(d * Math.PI / 180)));
+
+    // ---- Particles ----
+    const PCount  = 600;
+    const pPos    = new Float32Array(PCount * 3);
+    for (let i = 0; i < PCount; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi   = Math.acos(2 * Math.random() - 1);
+        const r     = 2.3 + Math.random() * 1.6;
+        pPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+        pPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        pPos[i * 3 + 2] = r * Math.cos(phi);
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: C_SAGE, size: 0.016, transparent: true, opacity: 0.45 });
+    const particles = new THREE.Points(pGeo, pMat);
     globeGroup.add(particles);
 
-    // --- MINIMAL WELLNESS NODES (small, elegant, not colorful) ---
-    // These are the icons on the globe - minimal SVG style
-    const wellnessNodes = [
-        { pos: [1.3, 0.8, 1.1], label: 'Organic' },
-        { pos: [-1.2, 0.6, 1.3], label: 'Heart' },
-        { pos: [0.4, 1.4, -0.6], label: 'Plant' },
-        { pos: [-0.9, -1.0, 1.2], label: 'Wellness' },
-        { pos: [1.1, -1.2, -0.8], label: 'Nutrition' },
-        { pos: [-1.3, 1.0, -0.5], label: 'Supplements' },
-        { pos: [0.2, 0.3, 1.9], label: 'Vitality' },
-        { pos: [-0.4, -1.4, -0.9], label: 'Natural' }
+    // ---- Wellness Nodes ----
+    const NODES = [
+        { pos: [ 1.3,  0.8,  1.1], label: 'Organic'      },
+        { pos: [-1.2,  0.6,  1.3], label: 'Heart'         },
+        { pos: [ 0.4,  1.4, -0.6], label: 'Plant'         },
+        { pos: [-0.9, -1.0,  1.2], label: 'Wellness'      },
+        { pos: [ 1.1, -1.2, -0.8], label: 'Nutrition'     },
+        { pos: [-1.3,  1.0, -0.5], label: 'Supplements'   },
+        { pos: [ 0.2,  0.3,  1.9], label: 'Vitality'      },
+        { pos: [-0.4, -1.4, -0.9], label: 'Natural'       },
     ];
 
-    // Create minimal icon textures using canvas
-    function createMinimalIcon(type) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 64;
-        canvas.height = 64;
-        const ctx = canvas.getContext('2d');
-        
-        // Clear
-        ctx.clearRect(0, 0, 64, 64);
-        
-        // Small circle background
-        ctx.fillStyle = '#004723';
-        ctx.beginPath();
-        ctx.arc(32, 32, 28, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Thin ring
-        ctx.strokeStyle = '#C4DA84';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(32, 32, 24, 0, Math.PI * 2);
-        ctx.stroke();
-        
-        // Minimal icon in white
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        switch(type) {
+    function makeNodeTexture(type) {
+        const cvs = document.createElement('canvas');
+        cvs.width = cvs.height = 80;
+        const c   = cvs.getContext('2d');
+
+        // Background circle
+        c.fillStyle = '#004723';
+        c.beginPath();
+        c.arc(40, 40, 36, 0, Math.PI * 2);
+        c.fill();
+
+        // Sage ring
+        c.strokeStyle = '#C4DA84';
+        c.lineWidth = 2.5;
+        c.beginPath();
+        c.arc(40, 40, 30, 0, Math.PI * 2);
+        c.stroke();
+
+        // Icon
+        c.strokeStyle = '#FFFFFF';
+        c.fillStyle   = '#FFFFFF';
+        c.lineWidth   = 2;
+        c.lineCap     = 'round';
+        c.lineJoin    = 'round';
+
+        switch (type) {
             case 'Organic':
-                // Leaf
-                ctx.beginPath();
-                ctx.moveTo(32, 20);
-                ctx.quadraticCurveTo(42, 24, 42, 32);
-                ctx.quadraticCurveTo(42, 42, 32, 44);
-                ctx.quadraticCurveTo(22, 42, 22, 32);
-                ctx.quadraticCurveTo(22, 24, 32, 20);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(32, 20);
-                ctx.lineTo(32, 38);
-                ctx.stroke();
+                c.beginPath(); c.moveTo(40, 22);
+                c.quadraticCurveTo(52, 28, 52, 38);
+                c.quadraticCurveTo(52, 52, 40, 55);
+                c.quadraticCurveTo(28, 52, 28, 38);
+                c.quadraticCurveTo(28, 28, 40, 22);
+                c.stroke();
+                c.beginPath(); c.moveTo(40, 22); c.lineTo(40, 50); c.stroke();
                 break;
             case 'Heart':
-                // Heart
-                ctx.beginPath();
-                ctx.moveTo(32, 42);
-                ctx.bezierCurveTo(20, 34, 20, 26, 26, 22);
-                ctx.bezierCurveTo(30, 20, 32, 24, 32, 24);
-                ctx.bezierCurveTo(32, 24, 34, 20, 38, 22);
-                ctx.bezierCurveTo(44, 26, 44, 34, 32, 42);
-                ctx.fill();
+                c.beginPath(); c.moveTo(40, 54);
+                c.bezierCurveTo(24, 44, 24, 32, 31, 28);
+                c.bezierCurveTo(35, 25, 40, 29, 40, 29);
+                c.bezierCurveTo(40, 29, 45, 25, 49, 28);
+                c.bezierCurveTo(56, 32, 56, 44, 40, 54);
+                c.fill();
                 break;
             case 'Plant':
-                // Sprout
-                ctx.beginPath();
-                ctx.moveTo(32, 44);
-                ctx.lineTo(32, 28);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.ellipse(26, 26, 6, 10, -0.5, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.ellipse(38, 26, 6, 10, 0.5, 0, Math.PI * 2);
-                ctx.stroke();
+                c.beginPath(); c.moveTo(40, 58); c.lineTo(40, 36); c.stroke();
+                c.beginPath(); c.ellipse(33, 34, 7, 11, -0.5, 0, Math.PI * 2); c.stroke();
+                c.beginPath(); c.ellipse(47, 34, 7, 11,  0.5, 0, Math.PI * 2); c.stroke();
                 break;
             case 'Wellness':
-                // Shield
-                ctx.beginPath();
-                ctx.moveTo(32, 18);
-                ctx.lineTo(44, 24);
-                ctx.lineTo(44, 34);
-                ctx.quadraticCurveTo(44, 44, 32, 48);
-                ctx.quadraticCurveTo(20, 44, 20, 34);
-                ctx.lineTo(20, 24);
-                ctx.closePath();
-                ctx.stroke();
+                c.beginPath(); c.moveTo(40, 22); c.lineTo(54, 30); c.lineTo(54, 44);
+                c.quadraticCurveTo(54, 56, 40, 60);
+                c.quadraticCurveTo(26, 56, 26, 44);
+                c.lineTo(26, 30); c.closePath(); c.stroke();
                 break;
             case 'Nutrition':
-                // Apple
-                ctx.beginPath();
-                ctx.arc(32, 34, 12, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(32, 22);
-                ctx.lineTo(32, 16);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.quadraticCurveTo(36, 16, 38, 20);
-                ctx.stroke();
+                c.beginPath(); c.arc(40, 44, 14, 0, Math.PI * 2); c.stroke();
+                c.beginPath(); c.moveTo(40, 30); c.lineTo(40, 22); c.stroke();
+                c.beginPath(); c.moveTo(40, 22); c.quadraticCurveTo(46, 22, 48, 27); c.stroke();
                 break;
             case 'Supplements':
-                // Pill
-                ctx.beginPath();
-                ctx.rect(24, 26, 16, 12, 6);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(32, 26);
-                ctx.lineTo(32, 38);
-                ctx.stroke();
+                c.beginPath();
+                c.roundRect(27, 32, 26, 16, 8);
+                c.stroke();
+                c.beginPath(); c.moveTo(40, 32); c.lineTo(40, 48); c.stroke();
                 break;
             case 'Vitality':
-                // Heartbeat
-                ctx.beginPath();
-                ctx.moveTo(20, 32);
-                ctx.lineTo(26, 32);
-                ctx.lineTo(28, 24);
-                ctx.lineTo(32, 40);
-                ctx.lineTo(36, 28);
-                ctx.lineTo(38, 32);
-                ctx.lineTo(44, 32);
-                ctx.stroke();
+                c.beginPath(); c.moveTo(22, 40);
+                c.lineTo(30, 40); c.lineTo(33, 28); c.lineTo(40, 52);
+                c.lineTo(47, 32); c.lineTo(50, 40); c.lineTo(58, 40);
+                c.stroke();
                 break;
             case 'Natural':
-                // Leaf/flower
-                ctx.beginPath();
-                ctx.arc(32, 32, 10, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(32, 32, 4, 0, Math.PI * 2);
-                ctx.fill();
+                c.beginPath(); c.arc(40, 40, 12, 0, Math.PI * 2); c.stroke();
+                c.beginPath(); c.arc(40, 40, 5, 0, Math.PI * 2); c.fill();
                 break;
         }
-        
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.minFilter = THREE.LinearFilter;
-        return texture;
+
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.minFilter = THREE.LinearFilter;
+        return tex;
     }
 
-    wellnessNodes.forEach((node, index) => {
+    NODES.forEach((node, i) => {
         const pos = new THREE.Vector3(...node.pos);
-        
-        // Small glow ring (subtle)
-        const ringGeometry = new THREE.RingGeometry(0.18, 0.22, 32);
-        const ringMaterial = new THREE.MeshBasicMaterial({
-            color: SOFT_GREEN,
-            transparent: true,
-            opacity: 0.5,
-            side: THREE.DoubleSide
-        });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+
+        // Pulse ring
+        const ringGeo = new THREE.RingGeometry(0.18, 0.23, 36);
+        const ringMat = new THREE.MeshBasicMaterial({ color: C_SAGE, transparent: true, opacity: 0.55, side: THREE.DoubleSide });
+        const ring    = new THREE.Mesh(ringGeo, ringMat);
         ring.position.copy(pos);
         ring.lookAt(0, 0, 0);
         globeGroup.add(ring);
 
-        // Outer faint glow
-        const outerGlowGeometry = new THREE.RingGeometry(0.28, 0.32, 32);
-        const outerGlowMaterial = new THREE.MeshBasicMaterial({
-            color: SOFT_GREEN,
-            transparent: true,
-            opacity: 0.15,
-            side: THREE.DoubleSide
-        });
-        const outerGlow = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
-        outerGlow.position.copy(pos);
-        outerGlow.lookAt(0, 0, 0);
-        globeGroup.add(outerGlow);
+        // Outer halo
+        const haloGeo = new THREE.RingGeometry(0.3, 0.35, 36);
+        const haloMat = new THREE.MeshBasicMaterial({ color: C_SAGE, transparent: true, opacity: 0.12, side: THREE.DoubleSide });
+        const halo    = new THREE.Mesh(haloGeo, haloMat);
+        halo.position.copy(pos);
+        halo.lookAt(0, 0, 0);
+        globeGroup.add(halo);
 
-        // Icon sprite (small, not big)
-        const texture = createMinimalIcon(node.label);
-        const spriteMaterial = new THREE.SpriteMaterial({ 
-            map: texture,
-            transparent: true,
-            opacity: 0.95
-        });
-        const sprite = new THREE.Sprite(spriteMaterial);
+        // Icon sprite
+        const sprite    = new THREE.Sprite(new THREE.SpriteMaterial({ map: makeNodeTexture(node.label), transparent: true, opacity: 0.95 }));
         sprite.position.copy(pos);
-        sprite.scale.set(0.35, 0.35, 0.35);
+        sprite.scale.set(0.38, 0.38, 0.38);
         globeGroup.add(sprite);
 
-        // Store for animation
-        node.ring = ring;
-        node.outerGlow = outerGlow;
+        node.ring  = ring;
+        node.halo  = halo;
         node.sprite = sprite;
-        node.basePos = pos.clone();
-        node.phase = index * 0.8;
+        node.phase  = i * 0.78;
     });
 
-    // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
+    // ---- Lights ----
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const rim = new THREE.DirectionalLight(C_SAGE, 0.5);
+    rim.position.set(5, 4, 5);
+    scene.add(rim);
+    const fill = new THREE.DirectionalLight(C_FOREST, 0.25);
+    fill.position.set(-5, -3, 3);
+    scene.add(fill);
 
-    const rimLight = new THREE.DirectionalLight(SOFT_GREEN, 0.4);
-    rimLight.position.set(5, 3, 5);
-    scene.add(rimLight);
-
-    const fillLight = new THREE.DirectionalLight(DEEP_GREEN, 0.2);
-    fillLight.position.set(-5, -2, 3);
-    scene.add(fillLight);
-
-    // --- Animation ---
+    // ---- Interaction ----
     let isDragging = false;
-    let previousMousePosition = { x: 0, y: 0 };
-    let rotationVelocity = { x: 0, y: 0 };
-    const autoRotationSpeed = 0.0006;
+    let prevMouse  = { x: 0, y: 0 };
+    let velocity   = { x: 0, y: 0 };
+    const AUTO_SPEED = 0.0005;
 
+    const onMouseDown = (x, y) => { isDragging = true; prevMouse = { x, y }; };
+    const onMouseMove = (x, y) => {
+        if (!isDragging) return;
+        const dx = x - prevMouse.x;
+        const dy = y - prevMouse.y;
+        velocity.x = dx * 0.0004;
+        velocity.y = dy * 0.0004;
+        globeGroup.rotation.y += dx * 0.004;
+        globeGroup.rotation.x += dy * 0.004;
+        prevMouse = { x, y };
+    };
+    const onMouseUp   = () => { isDragging = false; };
+
+    container.addEventListener('mousedown',  e => onMouseDown(e.clientX, e.clientY));
+    container.addEventListener('mousemove',  e => onMouseMove(e.clientX, e.clientY));
+    container.addEventListener('mouseup',    onMouseUp);
+    container.addEventListener('mouseleave', onMouseUp);
+    container.addEventListener('touchstart', e => onMouseDown(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+    container.addEventListener('touchmove',  e => { e.preventDefault(); onMouseMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    container.addEventListener('touchend',   onMouseUp);
+
+    // ---- Animation ----
+    let raf;
     function animate() {
-        requestAnimationFrame(animate);
+        raf = requestAnimationFrame(animate);
+        const t = Date.now() * 0.001;
 
         if (!isDragging) {
-            globeGroup.rotation.y += autoRotationSpeed + rotationVelocity.x;
-            globeGroup.rotation.x += rotationVelocity.y;
-            
-            rotationVelocity.x *= 0.95;
-            rotationVelocity.y *= 0.95;
+            globeGroup.rotation.y += AUTO_SPEED + velocity.x;
+            globeGroup.rotation.x += velocity.y;
+            velocity.x *= 0.94;
+            velocity.y *= 0.94;
         }
 
-        // Animate particles slowly
-        const time = Date.now() * 0.001;
-        particles.rotation.y = time * 0.02;
+        particles.rotation.y = t * 0.018;
+        outerSphere.rotation.y -= 0.00018;
+        outerSphere.rotation.x += 0.00009;
 
-        // Gentle pulse for nodes
-        wellnessNodes.forEach((node) => {
-            const pulse = 1 + Math.sin(time * 1.5 + node.phase) * 0.08;
-            if (node.ring) node.ring.scale.set(pulse, pulse, pulse);
-            if (node.outerGlow) node.outerGlow.scale.set(pulse * 1.3, pulse * 1.3, pulse * 1.3);
+        NODES.forEach(node => {
+            const s = 1 + Math.sin(t * 1.4 + node.phase) * 0.1;
+            if (node.ring)  node.ring.scale.set(s, s, s);
+            if (node.halo)  node.halo.scale.set(s * 1.4, s * 1.4, s * 1.4);
         });
-
-        // Slow outer sphere rotation
-        outerSphere.rotation.y -= 0.0002;
-        outerSphere.rotation.x += 0.0001;
 
         renderer.render(scene, camera);
     }
     animate();
 
-    // --- Mouse Interaction ---
-    container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        previousMousePosition = { x: e.clientX, y: e.clientY };
-    });
-
-    container.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        
-        const deltaMove = {
-            x: e.clientX - previousMousePosition.x,
-            y: e.clientY - previousMousePosition.y
-        };
-
-        rotationVelocity.x = deltaMove.x * 0.0005;
-        rotationVelocity.y = deltaMove.y * 0.0005;
-
-        globeGroup.rotation.y += deltaMove.x * 0.005;
-        globeGroup.rotation.x += deltaMove.y * 0.005;
-
-        previousMousePosition = { x: e.clientX, y: e.clientY };
-    });
-
-    container.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-
-    container.addEventListener('mouseleave', () => {
-        isDragging = false;
-    });
-
-    // Touch support
-    container.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    });
-
-    container.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        
-        const deltaMove = {
-            x: e.touches[0].clientX - previousMousePosition.x,
-            y: e.touches[0].clientY - previousMousePosition.y
-        };
-
-        rotationVelocity.x = deltaMove.x * 0.0005;
-        rotationVelocity.y = deltaMove.y * 0.0005;
-
-        globeGroup.rotation.y += deltaMove.x * 0.005;
-        globeGroup.rotation.x += deltaMove.y * 0.005;
-
-        previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    });
-
-    container.addEventListener('touchend', () => {
-        isDragging = false;
-    });
-
-    // Resize
+    // ---- Resize ----
     window.addEventListener('resize', () => {
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
-        camera.aspect = width / height;
+        const w = container.offsetWidth;
+        const h = container.offsetHeight;
+        camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-    });
+        renderer.setSize(w, h);
+    }, { passive: true });
 })();
