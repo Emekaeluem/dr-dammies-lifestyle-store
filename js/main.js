@@ -27,7 +27,9 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ============================================
-// CONSTELLATION GLOBE — DR. DAMMIE'S EDITION
+// LIGHT CONSTELLATION GLOBE — DR. DAMMIE'S
+// Light background, polygon mesh, dot scatter,
+// green circular icon nodes — matches reference.
 // ============================================
 (function () {
     const container = document.getElementById('globe-container');
@@ -52,13 +54,13 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         ctx.scale(dpr, dpr);
         cx = W / 2;
         cy = H / 2;
-        R  = Math.min(W, H) * 0.42;
+        R  = Math.min(W, H) * 0.43;
     }
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
     // ── Rotation state ──
-    let rotY = 0.3, rotX = 0.15;
+    let rotY = 0.3, rotX = 0.12;
     let velX = 0, velY = 0;
     let dragging = false, auto = true;
     let ds = { x: 0, y: 0 };
@@ -98,7 +100,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         setTimeout(() => auto = true, 2200);
     });
 
-    // ── Projection ──
+    // ── 3D projection ──
     function project(latD, lonD) {
         const lat = latD * Math.PI / 180;
         const lon = lonD * Math.PI / 180 + rotY;
@@ -111,168 +113,303 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         return { x: cx + x * R, y: cy - y2 * R, z: z2, v: z2 > -0.05 };
     }
 
-    // ── Continental outline coordinates ──
-    const CONTS = [
-        // North America
-        [[70,-140],[68,-110],[62,-90],[58,-94],[48,-88],[44,-66],[42,-70],[38,-76],[30,-81],[24,-82],[22,-90],[16,-88],[12,-84],[8,-77],[18,-67],[20,-74],[24,-90],[22,-106],[20,-105],[16,-96],[14,-88],[22,-90],[24,-110],[28,-112],[30,-116],[32,-117],[38,-122],[44,-124],[50,-125],[56,-130],[60,-146],[60,-152],[58,-158],[64,-166],[68,-166],[70,-162],[68,-150],[70,-140]],
-        // Greenland
-        [[76,-70],[80,-52],[84,-44],[82,-28],[76,-22],[70,-26],[66,-36],[66,-46],[70,-64],[76,-70]],
-        // South America
-        [[12,-72],[8,-62],[4,-52],[0,-50],[-4,-44],[-8,-36],[-14,-38],[-20,-40],[-24,-46],[-30,-50],[-36,-54],[-42,-64],[-50,-70],[-56,-68],[-52,-64],[-46,-65],[-38,-58],[-30,-50],[-22,-42],[-14,-38],[-6,-36],[0,-44],[6,-58],[10,-62],[12,-72]],
-        // Europe
-        [[70,28],[66,14],[60,5],[56,8],[52,4],[48,0],[44,-2],[44,6],[42,8],[38,0],[36,-6],[36,8],[38,16],[40,18],[40,22],[36,28],[36,34],[40,30],[44,28],[46,30],[48,22],[52,14],[56,10],[60,6],[64,10],[68,16],[70,22],[70,28]],
-        // Africa
-        [[36,10],[28,12],[20,16],[12,12],[8,4],[0,6],[-4,10],[-10,14],[-18,20],[-28,18],[-34,22],[-34,26],[-28,34],[-22,36],[-14,38],[-4,40],[4,44],[8,48],[12,52],[12,42],[8,38],[4,36],[0,34],[8,30],[14,32],[20,36],[28,32],[34,30],[36,10]],
-        // Asia
-        [[70,30],[64,40],[60,44],[56,48],[52,52],[48,58],[44,58],[36,62],[28,66],[20,70],[16,74],[8,78],[8,80],[16,82],[24,90],[28,98],[24,100],[20,100],[16,104],[12,108],[4,108],[0,110],[4,114],[8,116],[16,120],[20,116],[24,116],[28,120],[36,120],[40,122],[44,128],[50,140],[56,140],[60,150],[64,148],[60,132],[56,130],[52,132],[48,140],[44,142],[44,148],[48,140],[52,140],[56,138],[60,140],[64,148],[68,150],[70,154],[70,140],[66,134],[60,128],[56,124],[48,116],[40,106],[36,102],[28,96],[20,88],[12,80],[8,78],[4,76],[4,70],[8,66],[12,62],[16,56],[20,58],[24,56],[28,50],[32,46],[36,44],[40,42],[44,40],[52,46],[56,48],[60,44],[64,40],[68,38],[70,30]],
-        // Australia
-        [[-16,136],[-12,130],[-18,122],[-26,114],[-32,116],[-36,120],[-38,128],[-36,136],[-34,138],[-36,140],[-40,148],[-36,152],[-30,154],[-22,150],[-16,144],[-12,136],[-16,136]],
-        // Japan
-        [[40,140],[38,140],[36,136],[34,132],[34,130],[36,130],[38,134],[40,138],[40,140]],
-        // UK
-        [[50,-6],[52,-4],[56,0],[58,-4],[56,-6],[52,-4],[50,-6]],
-        // New Zealand
-        [[-34,172],[-38,176],[-44,170],[-46,170],[-44,172],[-38,174],[-34,172]],
-    ];
-
-    // ── Scatter dots — surface dots on globe (constellation feel) ──
-    // Pre-generate: a mix of dense clusters and sparse fills
+    // ── Scatter dots — evenly spread, light green ──
     const DOTS = [];
     (function () {
-        let rng = 137;
+        let rng = 42;
         const rand = () => { rng = (rng * 1664525 + 1013904223) & 0xFFFFFFFF; return (rng >>> 0) / 0xFFFFFFFF; };
 
-        // Dr. Dammie's palette dot colors
+        // Light greens and sage tones to match reference
         const COLS = [
-            'rgba(196,218,132,IDX)',   // sage — main
-            'rgba(196,218,132,IDX)',   // sage — repeated for weight
-            'rgba(0,92,46,IDX)',       // forest mid
-            'rgba(216,233,168,IDX)',   // sage light
-            'rgba(143,181,90,IDX)',    // mid green
-            'rgba(255,255,255,IDX)',   // white accent
+            [0,   71,  35,  0.20],  // deep forest, very faint
+            [0,   71,  35,  0.14],
+            [0,   71,  35,  0.28],
+            [80,  140, 70,  0.22],  // mid green
+            [80,  140, 70,  0.16],
+            [120, 180, 80,  0.18],  // sage
+            [120, 180, 80,  0.12],
+            [0,   71,  35,  0.10],
         ];
 
-        for (let i = 0; i < 480; i++) {
-            // Fibonacci sphere distribution for even spread
+        for (let i = 0; i < 520; i++) {
+            // Fibonacci sphere for even distribution
             const theta = Math.acos(2 * rand() - 1);
             const phi   = rand() * Math.PI * 2;
             const latD  = (Math.PI / 2 - theta) * 180 / Math.PI;
             const lonD  = phi * 180 / Math.PI - 180;
             const col   = COLS[Math.floor(rand() * COLS.length)];
-            const size  = 0.9 + rand() * 1.6;
-            const alpha = 0.25 + rand() * 0.55;
-            const shape = rand() > 0.72 ? 'sq' : 'ci'; // mix squares and circles like reference
-            DOTS.push({ lat: latD, lon: lonD, col: col.replace('IDX', alpha.toFixed(2)), size, shape });
+            const size  = 0.7 + rand() * 1.4;
+            const shape = rand() > 0.65 ? 'sq' : 'ci';
+            DOTS.push({ lat: latD, lon: lonD, col, size, shape });
         }
     })();
 
-    // ── Planet nodes ──
+    // ── Polygon mesh nodes — distribute around the globe ──
+    // These are the structural points that form the polygon mesh lines
+    const MESH_POINTS = [];
+    (function () {
+        let rng = 99;
+        const rand = () => { rng = (rng * 1664525 + 1013904223) & 0xFFFFFFFF; return (rng >>> 0) / 0xFFFFFFFF; };
+        // Create ~60 evenly distributed mesh points
+        for (let i = 0; i < 60; i++) {
+            const theta = Math.acos(2 * rand() - 1);
+            const phi   = rand() * Math.PI * 2;
+            MESH_POINTS.push({
+                lat: (Math.PI / 2 - theta) * 180 / Math.PI,
+                lon: phi * 180 / Math.PI - 180,
+            });
+        }
+    })();
+
+    // ── Wellness icon nodes (the big circular ones) ──
+    // Using SVG path data drawn inline on canvas
     const NODES = [
-        { lat: 4,   lon: 20,   label: '🌿 Organic',      r: 22, fill: '#C4DA84', ring: '#8FB55A', glow: 'rgba(196,218,132,0.35)' },
-        { lat: 22,  lon: -102, label: '🥑 Keto',          r: 18, fill: '#003D1F', ring: '#C4DA84', glow: 'rgba(196,218,132,0.3)'  },
-        { lat: 51,  lon: 10,   label: '🌾 Gluten-Free',   r: 20, fill: '#D8E9A8', ring: '#004723', glow: 'rgba(216,233,168,0.35)' },
-        { lat: -24, lon: 133,  label: '🥗 Low-Carb',      r: 16, fill: '#005C2E', ring: '#C4DA84', glow: 'rgba(0,92,46,0.4)'      },
-        { lat: 34,  lon: 108,  label: '🍵 Wellness',      r: 22, fill: '#C4DA84', ring: '#003D1F', glow: 'rgba(196,218,132,0.4)'  },
-        { lat: -10, lon: -54,  label: '🍫 Chocolate',     r: 17, fill: '#004723', ring: '#D8E9A8', glow: 'rgba(0,71,35,0.45)'     },
-        { lat: 55,  lon: 78,   label: '🥜 Snacks',        r: 19, fill: '#8FB55A', ring: '#003D1F', glow: 'rgba(143,181,90,0.35)'  },
-        { lat: 24,  lon: 70,   label: '💊 Supplements',   r: 15, fill: '#D8E9A8', ring: '#005C2E', glow: 'rgba(216,233,168,0.3)'  },
-        { lat: -34, lon: 25,   label: '❤️ Heart Health',  r: 20, fill: '#003D1F', ring: '#C4DA84', glow: 'rgba(196,218,132,0.35)' },
-        { lat: 15,  lon: 44,   label: '🌱 Plant-Based',   r: 14, fill: '#C4DA84', ring: '#004723', glow: 'rgba(196,218,132,0.3)'  },
-        { lat: 60,  lon: -90,  label: '⚡ Vitality',      r: 18, fill: '#005C2E', ring: '#D8E9A8', glow: 'rgba(0,92,46,0.4)'      },
+        {
+            lat: 18, lon: -30,
+            r: 28,
+            fillDark: true,       // dark green fill (like in reference)
+            icon: 'leaf',
+            label: '🌿 Organic',
+        },
+        {
+            lat: 46, lon: 68,
+            r: 26,
+            fillDark: false,      // light green fill with dark outline
+            icon: 'heart-pulse',
+            label: '❤️ Heart Health',
+        },
+        {
+            lat: -18, lon: 112,
+            r: 26,
+            fillDark: true,
+            icon: 'lotus',
+            label: '🌱 Wellness',
+        },
+        {
+            lat: 52, lon: -70,
+            r: 24,
+            fillDark: false,
+            icon: 'bottle',
+            label: '💊 Supplements',
+        },
+        {
+            lat: -8, lon: -58,
+            r: 22,
+            fillDark: false,
+            icon: 'bottle',
+            label: '🥜 Snacks',
+        },
     ];
 
-    // ── Tooltip ──
-    const tooltip = document.createElement('div');
-    tooltip.style.cssText = `
-        position:fixed;z-index:500;pointer-events:none;
-        background:rgba(0,25,12,0.94);border:1px solid rgba(196,218,132,0.5);
-        border-radius:10px;padding:8px 15px;
-        font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
-        color:#C4DA84;backdrop-filter:blur(14px);
-        opacity:0;transition:opacity 0.18s;white-space:nowrap;
-        box-shadow:0 4px 22px rgba(0,71,35,0.4);
-    `;
-    document.body.appendChild(tooltip);
+    // ── Draw icon on canvas at (px, py) with given radius ──
+    function drawIcon(px, py, r, icon, dark) {
+        const fg = dark ? '#FFFFFF' : '#003D1F';
+        const s  = r * 0.72; // icon scale
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.strokeStyle = fg;
+        ctx.fillStyle   = fg;
+        ctx.lineWidth   = s * 0.09;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
 
-    canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-        let found = null;
-        NODES.forEach(n => {
-            if (!n.p || !n.p.v) return;
-            const dx = mx - n.p.x, dy = my - n.p.y;
-            if (Math.sqrt(dx * dx + dy * dy) < n.r + 8) found = n;
-        });
-        if (found) {
-            tooltip.textContent = found.label;
-            const tx = Math.min(e.clientX + 16, window.innerWidth - 160);
-            tooltip.style.left = tx + 'px';
-            tooltip.style.top  = (e.clientY - 14) + 'px';
-            tooltip.style.opacity = '1';
-        } else {
-            tooltip.style.opacity = '0';
+        if (icon === 'leaf') {
+            // Simple leaf shape
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.55);
+            ctx.bezierCurveTo(-s * 0.55, 0, -s * 0.55, -s * 0.5, 0, -s * 0.55);
+            ctx.bezierCurveTo(s * 0.55, -s * 0.5, s * 0.55, 0, 0, s * 0.55);
+            ctx.fill();
+            // stem line
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.55);
+            ctx.lineTo(0, -s * 0.55);
+            ctx.strokeStyle = dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,61,31,0.4)';
+            ctx.lineWidth = s * 0.06;
+            ctx.stroke();
+        } else if (icon === 'heart-pulse') {
+            // Heart outline
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.2);
+            ctx.bezierCurveTo(-s * 0.05, s * 0.5, -s * 0.7, s * 0.5, -s * 0.7, s * 0.05);
+            ctx.bezierCurveTo(-s * 0.7, -s * 0.3, -s * 0.35, -s * 0.55, 0, -s * 0.2);
+            ctx.bezierCurveTo(s * 0.35, -s * 0.55, s * 0.7, -s * 0.3, s * 0.7, s * 0.05);
+            ctx.bezierCurveTo(s * 0.7, s * 0.5, s * 0.05, s * 0.5, 0, s * 0.2);
+            ctx.closePath();
+            ctx.strokeStyle = fg;
+            ctx.lineWidth   = s * 0.1;
+            ctx.stroke();
+            // pulse line through heart
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.45, s * 0.12);
+            ctx.lineTo(-s * 0.18, s * 0.12);
+            ctx.lineTo(-s * 0.06, -s * 0.18);
+            ctx.lineTo(s * 0.06,  s * 0.35);
+            ctx.lineTo(s * 0.18,  s * 0.12);
+            ctx.lineTo(s * 0.45,  s * 0.12);
+            ctx.strokeStyle = fg;
+            ctx.lineWidth   = s * 0.09;
+            ctx.stroke();
+        } else if (icon === 'lotus') {
+            // Lotus / spa flower
+            // Center petal
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.5);
+            ctx.bezierCurveTo(-s * 0.25, s * 0.1, -s * 0.25, -s * 0.5, 0, -s * 0.55);
+            ctx.bezierCurveTo(s * 0.25, -s * 0.5, s * 0.25, s * 0.1, 0, s * 0.5);
+            ctx.strokeStyle = fg; ctx.lineWidth = s * 0.09; ctx.stroke();
+            // left petal
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.1, s * 0.3);
+            ctx.bezierCurveTo(-s * 0.55, s * 0.2, -s * 0.7, -s * 0.2, -s * 0.5, -s * 0.45);
+            ctx.bezierCurveTo(-s * 0.3, -s * 0.2, -s * 0.2, s * 0.0, -s * 0.1, s * 0.3);
+            ctx.stroke();
+            // right petal
+            ctx.beginPath();
+            ctx.moveTo(s * 0.1, s * 0.3);
+            ctx.bezierCurveTo(s * 0.55, s * 0.2, s * 0.7, -s * 0.2, s * 0.5, -s * 0.45);
+            ctx.bezierCurveTo(s * 0.3, -s * 0.2, s * 0.2, s * 0.0, s * 0.1, s * 0.3);
+            ctx.stroke();
+            // base arc
+            ctx.beginPath();
+            ctx.arc(0, s * 0.42, s * 0.32, Math.PI, 0, false);
+            ctx.stroke();
+        } else if (icon === 'bottle') {
+            // Supplement bottle
+            const bw = s * 0.42, bh = s * 0.75;
+            const nx = -bw / 2, ny = -bh * 0.45;
+            // cap
+            ctx.beginPath();
+            ctx.roundRect(nx + bw * 0.15, ny - s * 0.22, bw * 0.7, s * 0.22, s * 0.04);
+            ctx.strokeStyle = fg; ctx.lineWidth = s * 0.09; ctx.stroke();
+            // body
+            ctx.beginPath();
+            ctx.roundRect(nx, ny, bw, bh, s * 0.08);
+            ctx.stroke();
+            // label line
+            ctx.beginPath();
+            ctx.moveTo(nx + bw * 0.15, ny + bh * 0.35);
+            ctx.lineTo(nx + bw * 0.85, ny + bh * 0.35);
+            ctx.lineWidth = s * 0.07; ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(nx + bw * 0.2, ny + bh * 0.5);
+            ctx.lineTo(nx + bw * 0.8, ny + bh * 0.5);
+            ctx.stroke();
         }
-    });
-    canvas.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
 
-    // ── Draw the dark sphere background ──
-    function drawSphere() {
-        // Deep dark sphere fill — like the reference image
-        const g = ctx.createRadialGradient(cx - R * 0.2, cy - R * 0.22, R * 0.05, cx, cy, R);
-        g.addColorStop(0,   'rgba(0, 28, 14, 0.96)');
-        g.addColorStop(0.5, 'rgba(0, 20, 10, 0.97)');
-        g.addColorStop(1,   'rgba(0, 10, 5,  0.98)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
-
-        // Soft green rim glow
-        const rim = ctx.createRadialGradient(cx, cy, R * 0.75, cx, cy, R * 1.05);
-        rim.addColorStop(0,   'transparent');
-        rim.addColorStop(0.7, 'rgba(0, 71, 35, 0.08)');
-        rim.addColorStop(1,   'rgba(196,218,132, 0.12)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R * 1.05, 0, Math.PI * 2);
-        ctx.fillStyle = rim;
-        ctx.fill();
-
-        // Edge ring
-        const edgeG = ctx.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
-        edgeG.addColorStop(0,   'rgba(196,218,132, 0.22)');
-        edgeG.addColorStop(0.5, 'rgba(0, 71, 35,   0.15)');
-        edgeG.addColorStop(1,   'rgba(0, 20, 10,   0.20)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.strokeStyle = edgeG;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Specular top-left highlight
-        const spec = ctx.createRadialGradient(cx - R * 0.30, cy - R * 0.28, 0, cx - R * 0.26, cy - R * 0.22, R * 0.42);
-        spec.addColorStop(0,   'rgba(196,218,132, 0.10)');
-        spec.addColorStop(0.5, 'rgba(196,218,132, 0.03)');
-        spec.addColorStop(1,   'transparent');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.fillStyle = spec;
-        ctx.fill();
+        ctx.restore();
     }
 
-    // ── Clip to sphere ──
-    function clipToSphere() {
+    // ── Draw polygon mesh ──
+    // Connect nearby mesh points with thin green lines to form irregular polygons
+    function drawMesh() {
+        ctx.save();
+        const pts = MESH_POINTS.map(mp => {
+            const p = project(mp.lat, mp.lon);
+            return { ...p, origZ: p.z };
+        });
+
+        // Connect each point to its 2–4 nearest visible neighbours
+        for (let i = 0; i < pts.length; i++) {
+            if (!pts[i].v) continue;
+            const aZ = Math.max(0, pts[i].origZ);
+
+            // Find nearest neighbours
+            const dists = [];
+            for (let j = 0; j < pts.length; j++) {
+                if (i === j || !pts[j].v) continue;
+                const dx = pts[i].x - pts[j].x;
+                const dy = pts[i].y - pts[j].y;
+                dists.push({ j, d: Math.sqrt(dx * dx + dy * dy) });
+            }
+            dists.sort((a, b) => a.d - b.d);
+
+            const maxConnect = 3;
+            const maxDist = R * 0.68;
+
+            for (let k = 0; k < Math.min(maxConnect, dists.length); k++) {
+                const { j, d } = dists[k];
+                if (d > maxDist) break;
+                if (j < i) continue; // draw each edge once
+
+                const bZ = Math.max(0, pts[j].origZ);
+                const avgZ = (aZ + bZ) * 0.5;
+                const alpha = avgZ * 0.28;  // very faint
+
+                ctx.beginPath();
+                ctx.moveTo(pts[i].x, pts[i].y);
+                ctx.lineTo(pts[j].x, pts[j].y);
+                ctx.strokeStyle = `rgba(0, 71, 35, ${alpha.toFixed(3)})`;
+                ctx.lineWidth = 0.6;
+                ctx.setLineDash([]);
+                ctx.stroke();
+            }
+        }
+
+        // Draw small dot at each mesh point
+        pts.forEach(p => {
+            if (!p.v || p.origZ < 0.0) return;
+            const a = p.origZ * 0.35;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0, 71, 35, ${a.toFixed(3)})`;
+            ctx.fill();
+        });
+
+        ctx.restore();
+    }
+
+    // ── Draw scatter dots ──
+    function drawDots() {
+        ctx.save();
+        DOTS.forEach(d => {
+            const p = project(d.lat, d.lon);
+            if (!p.v) return;
+            const fadeAlpha = Math.min(1, (p.z + 0.05) * 2.5);
+            const [r, g, b, a] = d.col;
+            ctx.globalAlpha = fadeAlpha * a * 3.5; // bring up to visible
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            if (d.shape === 'sq') {
+                const s = d.size * 1.0;
+                ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+            } else {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, d.size * 0.65, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+
+    // ── Draw globe boundary circle ──
+    function drawGlobeBorder() {
+        // Very soft circle edge with fade
+        const grad = ctx.createRadialGradient(cx, cy, R * 0.82, cx, cy, R);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(1, 'rgba(0, 71, 35, 0.06)');
         ctx.beginPath();
-        ctx.arc(cx, cy, R - 0.5, 0, Math.PI * 2);
-        ctx.clip();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Crisp boundary ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(0, 71, 35, 0.18)';
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([]);
+        ctx.stroke();
     }
 
     // ── Draw lat/lon grid — very faint ──
     function drawGrid() {
         ctx.save();
-        ctx.strokeStyle = 'rgba(0, 71, 35, 0.18)';
-        ctx.lineWidth = 0.5;
-        ctx.setLineDash([3, 8]);
-        for (let lat = -80; lat <= 80; lat += 20) {
+        ctx.strokeStyle = 'rgba(0, 100, 50, 0.08)';
+        ctx.lineWidth   = 0.5;
+        ctx.setLineDash([3, 10]);
+        // Latitude lines
+        for (let lat = -60; lat <= 60; lat += 30) {
             ctx.beginPath();
             for (let lon = -180; lon <= 180; lon += 3) {
                 const p = project(lat, lon);
@@ -281,6 +418,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
             }
             ctx.stroke();
         }
+        // Longitude lines
         for (let lon = -180; lon < 180; lon += 30) {
             ctx.beginPath();
             for (let lat = -90; lat <= 90; lat += 3) {
@@ -293,176 +431,139 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         ctx.restore();
     }
 
-    // ── Draw continent outlines ──
-    function drawConts() {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(196, 218, 132, 0.30)';
-        ctx.lineWidth = 1.0;
-        ctx.lineJoin = 'round';
-        ctx.lineCap  = 'round';
-        ctx.setLineDash([]);
-        CONTS.forEach(shape => {
-            ctx.beginPath();
-            let lv = false;
-            shape.forEach(([lat, lon]) => {
-                const p = project(lat, lon);
-                if (p.v) { !lv ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); lv = true; }
-                else lv = false;
-            });
-            ctx.stroke();
-        });
-        ctx.restore();
-    }
+    // ── Tooltip ──
+    const tooltip = document.createElement('div');
+    tooltip.style.cssText = `
+        position:fixed;z-index:500;pointer-events:none;
+        background:rgba(0,61,31,0.92);border:1px solid rgba(196,218,132,0.5);
+        border-radius:10px;padding:7px 14px;
+        font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+        color:#C4DA84;backdrop-filter:blur(10px);
+        opacity:0;transition:opacity 0.16s;white-space:nowrap;
+        box-shadow:0 4px 18px rgba(0,61,31,0.22);
+    `;
+    document.body.appendChild(tooltip);
 
-    // ── Draw scatter dots (constellation feel) ──
-    function drawDots() {
-        ctx.save();
-        DOTS.forEach(d => {
-            const p = project(d.lat, d.lon);
-            if (!p.v) return;
-            // Fade dots near edge
-            const fadeAlpha = Math.min(1, (p.z + 0.05) * 3);
-            ctx.globalAlpha = fadeAlpha;
-            ctx.fillStyle = d.col;
-            if (d.shape === 'sq') {
-                const s = d.size * 1.1;
-                ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
-            } else {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, d.size * 0.75, 0, Math.PI * 2);
-                ctx.fill();
-            }
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+        let found = null;
+        NODES.forEach(n => {
+            if (!n.p || !n.p.v) return;
+            const dx = mx - n.p.x, dy = my - n.p.y;
+            if (Math.sqrt(dx * dx + dy * dy) < n.r + 10) found = n;
         });
-        ctx.globalAlpha = 1;
-        ctx.restore();
-    }
-
-    // ── Draw connection lines between nodes ──
-    function drawConnections(t) {
-        ctx.save();
-        ctx.setLineDash([4, 8]);
-        for (let i = 0; i < NODES.length; i++) {
-            for (let j = i + 1; j < NODES.length; j++) {
-                const a = NODES[i], b = NODES[j];
-                if (!a.p?.v || !b.p?.v) continue;
-                if (a.p.z < 0.05 || b.p.z < 0.05) continue;
-                const dx = a.p.x - b.p.x, dy = a.p.y - b.p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > R * 0.85) continue;
-                const base = (1 - dist / (R * 0.85)) * 0.22;
-                const pulse = base * (0.7 + Math.sin(t * 0.6 + i * 0.8 + j * 0.5) * 0.3);
-                ctx.beginPath();
-                ctx.moveTo(a.p.x, a.p.y);
-                ctx.lineTo(b.p.x, b.p.y);
-                ctx.strokeStyle = `rgba(196,218,132,${pulse.toFixed(3)})`;
-                ctx.lineWidth = 0.65;
-                ctx.stroke();
-            }
+        if (found) {
+            tooltip.textContent = found.label;
+            const tx = Math.min(e.clientX + 16, window.innerWidth - 160);
+            tooltip.style.left  = tx + 'px';
+            tooltip.style.top   = (e.clientY - 14) + 'px';
+            tooltip.style.opacity = '1';
+        } else {
+            tooltip.style.opacity = '0';
         }
-        ctx.restore();
-    }
+    });
+    canvas.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; });
 
-    // ── Draw planet-style nodes ──
+    // ── Draw wellness icon nodes ──
     function drawNodes(t) {
         NODES.forEach(n => {
             const p = project(n.lat, n.lon);
             n.p = p;
             if (!p.v || p.z < 0.04) return;
 
-            const alpha = Math.min(1, (p.z - 0.04) * 4);
-            const pulse = 1 + Math.sin(t * 1.8 + n.lat * 0.15) * 0.06;
+            const alpha  = Math.min(1, (p.z - 0.04) * 5);
+            const pulse  = 1 + Math.sin(t * 1.4 + n.lat * 0.12) * 0.04;
+            const radius = n.r * pulse;
 
             ctx.save();
             ctx.globalAlpha = alpha;
 
-            // Outer glow halo
-            const haloR = (n.r + 10) * pulse;
-            const halo = ctx.createRadialGradient(p.x, p.y, n.r * 0.5, p.x, p.y, haloR * 1.6);
-            halo.addColorStop(0,   n.glow.replace(')', ', 0.5)').replace('rgba(', 'rgba(').replace(/,\s*[\d.]+\)$/, `, ${(0.28 * alpha).toFixed(2)})`));
-            halo.addColorStop(0.5, n.glow.replace(/,\s*[\d.]+\)$/, ', 0.08)'));
-            halo.addColorStop(1,   'transparent');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, haloR * 1.6, 0, Math.PI * 2);
-            ctx.fillStyle = halo;
-            ctx.fill();
+            if (n.fillDark) {
+                // Dark forest green filled circle
+                // Outer ring (sage/light green)
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius + 6, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 71, 35, 0.20)';
+                ctx.lineWidth   = 1.5;
+                ctx.stroke();
 
-            // Outer ring (like the reference image)
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, (n.r + 5) * pulse, 0, Math.PI * 2);
-            ctx.strokeStyle = n.ring;
-            ctx.lineWidth = 2.5;
-            ctx.globalAlpha = alpha * 0.55;
-            ctx.stroke();
+                // Second ring
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius + 2.5, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 71, 35, 0.35)';
+                ctx.lineWidth   = 1.2;
+                ctx.stroke();
 
-            // Mid ring
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, (n.r + 1) * pulse, 0, Math.PI * 2);
-            ctx.strokeStyle = n.ring;
-            ctx.lineWidth = 1.5;
-            ctx.globalAlpha = alpha * 0.85;
-            ctx.stroke();
+                // Main filled circle
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#003D1F';
+                ctx.fill();
 
-            // Planet body
-            const bodyG = ctx.createRadialGradient(
-                p.x - n.r * 0.3, p.y - n.r * 0.3, n.r * 0.05,
-                p.x, p.y, n.r * pulse
-            );
-            bodyG.addColorStop(0,   lighten(n.fill, 0.25));
-            bodyG.addColorStop(0.5, n.fill);
-            bodyG.addColorStop(1,   darken(n.fill, 0.35));
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, n.r * pulse, 0, Math.PI * 2);
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = bodyG;
-            ctx.fill();
+                // Subtle specular
+                const shine = ctx.createRadialGradient(
+                    p.x - radius * 0.28, p.y - radius * 0.28, 0,
+                    p.x, p.y, radius
+                );
+                shine.addColorStop(0, 'rgba(255,255,255,0.14)');
+                shine.addColorStop(1, 'transparent');
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = shine;
+                ctx.fill();
 
-            // Specular shine on planet
-            const shine = ctx.createRadialGradient(
-                p.x - n.r * 0.28, p.y - n.r * 0.28, 0,
-                p.x - n.r * 0.2,  p.y - n.r * 0.2,  n.r * 0.55
-            );
-            shine.addColorStop(0,   'rgba(255,255,255,0.28)');
-            shine.addColorStop(0.6, 'rgba(255,255,255,0.06)');
-            shine.addColorStop(1,   'transparent');
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, n.r * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = shine;
-            ctx.fill();
+                drawIcon(p.x, p.y, radius, n.icon, true);
+            } else {
+                // Light fill — sage/white circle with dark green border
+                // Outer glow ring
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius + 7, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(196, 218, 132, 0.45)';
+                ctx.lineWidth   = 1.5;
+                ctx.stroke();
+
+                // Second ring
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius + 2.5, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 71, 35, 0.55)';
+                ctx.lineWidth   = 1.5;
+                ctx.stroke();
+
+                // Light fill body
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                const bg = ctx.createRadialGradient(
+                    p.x - radius * 0.2, p.y - radius * 0.2, 0,
+                    p.x, p.y, radius
+                );
+                bg.addColorStop(0, '#E8F4D8');
+                bg.addColorStop(1, '#C4DA84');
+                ctx.fillStyle = bg;
+                ctx.fill();
+
+                // Border
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.strokeStyle = '#004723';
+                ctx.lineWidth   = 1.8;
+                ctx.stroke();
+
+                drawIcon(p.x, p.y, radius, n.icon, false);
+            }
 
             ctx.restore();
         });
     }
 
-    // ── Color helpers ──
-    function hexToRgb(hex) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return [r, g, b];
-    }
-    function lighten(hex, amt) {
-        const [r, g, b] = hexToRgb(hex);
-        return `rgb(${Math.min(255, Math.round(r + (255 - r) * amt))},${Math.min(255, Math.round(g + (255 - g) * amt))},${Math.min(255, Math.round(b + (255 - b) * amt))})`;
-    }
-    function darken(hex, amt) {
-        const [r, g, b] = hexToRgb(hex);
-        return `rgb(${Math.round(r * (1 - amt))},${Math.round(g * (1 - amt))},${Math.round(b * (1 - amt))})`;
-    }
-
-    // ── Outer ambient glow ring around globe ──
-    function drawAmbient() {
-        const g = ctx.createRadialGradient(cx, cy, R * 0.88, cx, cy, R * 1.45);
-        g.addColorStop(0,   'transparent');
-        g.addColorStop(0.4, 'rgba(0, 71, 35, 0.07)');
-        g.addColorStop(0.8, 'rgba(196,218,132, 0.06)');
-        g.addColorStop(1,   'transparent');
+    // ── Clip to sphere ──
+    function clipToSphere() {
         ctx.beginPath();
-        ctx.arc(cx, cy, R * 1.45, 0, Math.PI * 2);
-        ctx.fillStyle = g;
-        ctx.fill();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.clip();
     }
 
-    // ── Animation loop ──
+    // ── Main animation loop ──
     function draw(ts) {
         requestAnimationFrame(draw);
         const t = ts * 0.001;
@@ -477,22 +578,18 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 
         ctx.clearRect(0, 0, W, H);
 
-        drawAmbient();
+        // Globe boundary (no fill — background stays light/white)
+        drawGlobeBorder();
 
-        ctx.save();
-        drawSphere();
-        ctx.restore();
-
-        // Clip everything inside to sphere
+        // Clip everything to the sphere circle
         ctx.save();
         clipToSphere();
         drawGrid();
-        drawConts();
+        drawMesh();
         drawDots();
-        drawConnections(t);
         ctx.restore();
 
-        // Nodes drawn outside clip so rings can bleed slightly
+        // Nodes drawn outside clip so rings bleed slightly
         drawNodes(t);
     }
     requestAnimationFrame(draw);
