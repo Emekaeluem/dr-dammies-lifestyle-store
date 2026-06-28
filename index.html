@@ -3,42 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr Dammies Lifestyle Store</title>
+    <title>Dr. Dammie's Lifestyle Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
 
-    <!-- ===== NAVIGATION BAR ===== -->
+    <!-- ===== NAVIGATION ===== -->
     <nav class="navbar">
         <a href="index.html" class="logo">
-            <img src="images/logo.png" alt="Dr Dammies Lifestyle Store">
+            <img src="images/logo.png" alt="Dr. Dammie's Lifestyle Store">
         </a>
         
         <span class="menu-toggle" onclick="toggleMenu()">☰</span>
         
         <ul class="nav-links" id="navLinks">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="blog.html">Blog</a></li>
+            <li><a href="#">Shop</a></li>
+            <li><a href="#">Categories</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="blog.html">Wellness Blog</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="#" class="shop-link">Shop</a></li>
+            <li><a href="#" class="nav-cta">Shop Now</a></li>
         </ul>
     </nav>
 
     <!-- ===== HERO SECTION ===== -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>Live Intentionally</h1>
-            <p>Curated essentials for a life well-lived.<br>Fashion. Wellness. Home. You.</p>
+        <div class="hero-left">
+            <span class="pill-badge">● WELCOME TO HEALTHIER LIVING</span>
+            <h1>Healthy Living Begins With <span class="highlight">Better Choices.</span></h1>
+            <p class="subheadline">Discover premium organic, vegan, gluten-free, keto, low-carb, and wellness products carefully selected to help you and your family live healthier every day.</p>
+            
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Shop the Collection</a>
-                <a href="about.html" class="btn btn-secondary">Our Story</a>
+                <a href="#" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Shop Now
+                </a>
+                <a href="#" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Explore Categories
+                </a>
             </div>
+            
+            <div class="trust-indicators">
+                <div class="trust-item">
+                    <span class="trust-icon">🌿</span>
+                    <span>Premium<br>Quality</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <span class="trust-icon">💚</span>
+                    <span>Better Choices,<br>Better You</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <span class="trust-icon">👨‍👩‍👧</span>
+                    <span>Trusted by<br>Families</span>
+                </div>
+                <div class="trust-separator"></div>
+                <div class="trust-item">
+                    <span class="trust-icon">🛡️</span>
+                    <span>Health &<br>Wellness First</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hero-right">
+            <div id="globe-container"></div>
         </div>
     </section>
 
+    <!-- Three.js for Globe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
