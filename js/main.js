@@ -1,4 +1,4 @@
-cat > /mnt/user-data/outputs/dr-dammies/js/main.js << 'JSEOF'
+
 // ============================================
 // NAVBAR — SCROLL EFFECT
 // ============================================
