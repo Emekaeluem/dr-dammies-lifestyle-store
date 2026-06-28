@@ -1,13 +1,13 @@
 /* ============================================
-   DR DAMMIES LIFESTYLE STORE - SHARED STYLES
+   DR. DAMMIE'S LIFESTYLE STORE - SHARED STYLES
    ============================================ */
 
 :root {
-    --navy: #1a1a2e;
-    --gold: #c9a96e;
-    --cream: #f8f6f3;
-    --dark: #333333;
-    --white: #ffffff;
+    --forest-green: #004723;
+    --soft-green: #C4DA84;
+    --white: #FFFFFF;
+    --light-gray: #f8faf8;
+    --text-dark: #1a1a1a;
 }
 
 * {
@@ -17,10 +17,11 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    color: var(--dark);
-    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
     background-color: var(--white);
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
 a {
@@ -28,55 +29,64 @@ a {
     color: inherit;
 }
 
-/* --- Navigation (Shared across all pages) --- */
+/* --- Navigation --- */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 60px;
-    background-color: var(--white);
-    border-bottom: 1px solid #eee;
-    position: sticky;
+    background: transparent;
+    position: absolute;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
 }
 
 .logo img {
-    height: 40px;
+    height: 50px;
 }
 
 .nav-links {
     display: flex;
     list-style: none;
     gap: 40px;
+    align-items: center;
 }
 
 .nav-links a {
-    color: var(--dark);
-    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
     font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    color: var(--forest-green);
     transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    color: var(--gold);
+    color: var(--soft-green);
 }
 
-.shop-link {
-    color: var(--gold);
+.nav-cta {
+    background: var(--forest-green);
+    color: var(--white) !important;
+    padding: 12px 28px;
+    border-radius: 14px;
     font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-/* --- Mobile Menu --- */
+.nav-cta:hover {
+    background: #006633;
+}
+
 .menu-toggle {
     display: none;
     font-size: 24px;
     cursor: pointer;
+    color: var(--forest-green);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .menu-toggle {
         display: block;
     }
@@ -84,16 +94,21 @@ a {
     .nav-links {
         display: none;
         position: absolute;
-        top: 70px;
+        top: 80px;
         left: 0;
         right: 0;
         background: var(--white);
         flex-direction: column;
-        padding: 20px 60px;
-        border-bottom: 1px solid #eee;
+        padding: 30px;
+        gap: 20px;
+        box-shadow: 0 10px 40px rgba(0,71,35,0.1);
     }
     
     .nav-links.active {
         display: flex;
+    }
+    
+    .navbar {
+        padding: 20px 30px;
     }
 }
