@@ -264,49 +264,40 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 18px;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(196,218,132,0.5);
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(196,218,132,0.55);
     border-radius: var(--radius-pill);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--forest);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 16px rgba(0,71,35,0.10), 0 1px 3px rgba(0,0,0,0.06);
     pointer-events: none;
+    white-space: nowrap;
     animation: float-tag-anim 4s ease-in-out infinite;
 }
 
-.float-tag-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--sage);
+.float-tag-icon {
+    font-size: 15px;
+    line-height: 1;
     flex-shrink: 0;
 }
 
-.float-tag--1 {
-    top: 14%;
-    left: 4%;
-    animation-delay: 0s;
-}
+/* Positions — left column */
+.float-tag--1 { top: 10%;   left: 2%;  animation-delay: 0s;   animation-duration: 4.2s; }
+.float-tag--2 { top: 36%;   left: 0%;  animation-delay: 0.7s; animation-duration: 3.8s; }
+.float-tag--3 { bottom: 18%; left: 2%;  animation-delay: 1.5s; animation-duration: 4.5s; }
 
-.float-tag--2 {
-    bottom: 22%;
-    left: 1%;
-    animation-delay: 1.3s;
-}
-
-.float-tag--3 {
-    top: 60%;
-    right: 2%;
-    animation-delay: 2.4s;
-}
+/* Positions — right column */
+.float-tag--4 { top: 10%;   right: 0%; animation-delay: 2.1s; animation-duration: 3.9s; }
+.float-tag--5 { top: 38%;   right: 0%; animation-delay: 1.0s; animation-duration: 4.3s; }
+.float-tag--6 { bottom: 18%; right: 0%; animation-delay: 2.8s; animation-duration: 4.0s; }
 
 @keyframes float-tag-anim {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-8px); }
+    0%, 100% { transform: translateY(0px);  }
+    50%       { transform: translateY(-9px); }
 }
 
 /* ============================================
@@ -346,9 +337,12 @@
         height: 460px;
     }
 
-    .float-tag--1 { top: 8%; left: 5%; }
-    .float-tag--2 { bottom: 6%; left: 5%; }
-    .float-tag--3 { top: 50%; right: 3%; }
+    .float-tag--1 { top: 7%;   left: 3%; }
+    .float-tag--2 { top: 34%;  left: 1%; }
+    .float-tag--3 { bottom: 6%; left: 3%; }
+    .float-tag--4 { top: 7%;   right: 1%; }
+    .float-tag--5 { top: 34%;  right: 1%; }
+    .float-tag--6 { bottom: 6%; right: 1%; }
 }
 
 @media (max-width: 600px) {
