@@ -1,73 +1,114 @@
 /* ============================================
-   DR DAMMIES - HOMEPAGE STYLES
+   DR. DAMMIE'S LIFESTYLE STORE - SHARED STYLES
    ============================================ */
 
-/* Hero Section */
-.hero {
+:root {
+    --forest-green: #004723;
+    --soft-green: #C4DA84;
+    --white: #FFFFFF;
+    --light-gray: #f8faf8;
+    --text-dark: #1a1a1a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--white);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* --- Navigation --- */
+.navbar {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    height: 80vh;
-    background-color: var(--cream);
-    text-align: center;
-    padding: 0 20px;
+    padding: 20px 60px;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 }
 
-.hero-content h1 {
-    font-family: 'Georgia', serif;
-    font-size: 56px;
-    color: var(--navy);
-    margin-bottom: 20px;
+.logo img {
+    height: 50px;
 }
 
-.hero-content p {
-    font-size: 20px;
-    color: var(--dark);
-    margin-bottom: 40px;
-}
-
-.hero-buttons {
+.nav-links {
     display: flex;
-    gap: 20px;
-    justify-content: center;
+    list-style: none;
+    gap: 40px;
+    align-items: center;
 }
 
-.btn {
-    padding: 14px 32px;
-    font-size: 14px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
+.nav-links a {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--forest-green);
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--soft-green);
+}
+
+.nav-cta {
+    background: var(--forest-green);
+    color: var(--white) !important;
+    padding: 12px 28px;
+    border-radius: 14px;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.btn-primary {
-    background-color: var(--navy);
-    color: var(--white);
+.nav-cta:hover {
+    background: #006633;
 }
 
-.btn-primary:hover {
-    background-color: var(--gold);
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--forest-green);
 }
 
-.btn-secondary {
-    background-color: transparent;
-    color: var(--navy);
-    border: 2px solid var(--navy);
-}
-
-.btn-secondary:hover {
-    background-color: var(--navy);
-    color: var(--white);
-}
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 36px;
+@media (max-width: 900px) {
+    .menu-toggle {
+        display: block;
     }
     
-    .hero-buttons {
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--white);
         flex-direction: column;
+        padding: 30px;
+        gap: 20px;
+        box-shadow: 0 10px 40px rgba(0,71,35,0.1);
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .navbar {
+        padding: 20px 30px;
     }
 }
