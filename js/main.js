@@ -13,7 +13,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ============================================
-// 3D WELLNESS GLOBE
+// 3D WELLNESS GLOBE - Dr Dammies Style
 // ============================================
 (function() {
     const container = document.getElementById('globe-container');
@@ -31,47 +31,52 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     const globeGroup = new THREE.Group();
     scene.add(globeGroup);
 
-    // --- Wireframe Sphere (denser) ---
-    const sphereGeometry = new THREE.IcosahedronGeometry(2, 3);
+    // --- COLORS ---
+    const DEEP_GREEN = 0x004723;
+    const SOFT_GREEN = 0xC4DA84;
+    const WHITE = 0xFFFFFF;
+
+    // --- Main Wireframe Sphere (dense, like your upload) ---
+    const sphereGeometry = new THREE.IcosahedronGeometry(2, 4);
     const wireframeMaterial = new THREE.MeshBasicMaterial({
-        color: 0x004723,
+        color: DEEP_GREEN,
         wireframe: true,
         transparent: true,
-        opacity: 0.25
+        opacity: 0.18
     });
     const wireframeSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
     globeGroup.add(wireframeSphere);
 
     // --- Inner Glow Sphere ---
-    const glowGeometry = new THREE.IcosahedronGeometry(1.95, 4);
+    const glowGeometry = new THREE.IcosahedronGeometry(1.98, 5);
     const glowMaterial = new THREE.MeshBasicMaterial({
-        color: 0xC4DA84,
+        color: SOFT_GREEN,
         transparent: true,
-        opacity: 0.06
+        opacity: 0.04
     });
     const glowSphere = new THREE.Mesh(glowGeometry, glowMaterial);
     globeGroup.add(glowSphere);
 
-    // --- Outer Wireframe (second layer for depth) ---
-    const outerGeometry = new THREE.IcosahedronGeometry(2.3, 2);
+    // --- Outer faint wireframe (for depth) ---
+    const outerGeometry = new THREE.IcosahedronGeometry(2.4, 2);
     const outerMaterial = new THREE.MeshBasicMaterial({
-        color: 0xC4DA84,
+        color: SOFT_GREEN,
         wireframe: true,
         transparent: true,
-        opacity: 0.08
+        opacity: 0.06
     });
     const outerSphere = new THREE.Mesh(outerGeometry, outerMaterial);
     globeGroup.add(outerSphere);
 
-    // --- Connection Lines between vertices ---
+    // --- Connection Lines (organic network feel) ---
     const lineMaterial = new THREE.LineBasicMaterial({
-        color: 0xC4DA84,
+        color: SOFT_GREEN,
         transparent: true,
-        opacity: 0.3
+        opacity: 0.2
     });
 
     const vertices = sphereGeometry.attributes.position.array;
-    for (let i = 0; i < vertices.length; i += 12) {
+    for (let i = 0; i < vertices.length; i += 15) {
         if (i + 6 < vertices.length) {
             const points = [];
             points.push(new THREE.Vector3(vertices[i], vertices[i+1], vertices[i+2]));
@@ -82,15 +87,15 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         }
     }
 
-    // --- Floating Particles (more dense) ---
-    const particleCount = 400;
+    // --- Floating Particles (many, small, subtle) ---
+    const particleCount = 500;
     const particleGeometry = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
     
     for (let i = 0; i < particleCount * 3; i += 3) {
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        const r = 2.3 + Math.random() * 1.2;
+        const r = 2.2 + Math.random() * 1.5;
         
         particlePositions[i] = r * Math.sin(phi) * Math.cos(theta);
         particlePositions[i+1] = r * Math.sin(phi) * Math.sin(theta);
@@ -100,79 +105,168 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
     
     const particleMaterial = new THREE.PointsMaterial({
-        color: 0xC4DA84,
-        size: 0.025,
+        color: SOFT_GREEN,
+        size: 0.018,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.4
     });
     
     const particles = new THREE.Points(particleGeometry, particleMaterial);
     globeGroup.add(particles);
 
-    // --- Wellness Nodes with Custom SVG Icons ---
+    // --- MINIMAL WELLNESS NODES (small, elegant, not colorful) ---
+    // These are the icons on the globe - minimal SVG style
     const wellnessNodes = [
-        { pos: [1.4, 0.9, 1.1], icon: 'leaf', label: 'Organic' },
-        { pos: [-1.2, 0.6, 1.3], icon: 'heart', label: 'Heart Health' },
-        { pos: [0.4, 1.5, -0.6], icon: 'plant', label: 'Plant-Based' },
-        { pos: [-0.9, -1.1, 1.2], icon: 'shield', label: 'Wellness' },
-        { pos: [1.1, -1.3, -0.8], icon: 'apple', label: 'Healthy Eating' },
-        { pos: [-1.3, 1.0, -0.5], icon: 'pill', label: 'Supplements' },
-        { pos: [0.2, 0.3, 1.9], icon: 'heart-pulse', label: 'Vitality' },
-        { pos: [-0.4, -1.4, -0.9], icon: 'sprout', label: 'Natural' }
+        { pos: [1.3, 0.8, 1.1], label: 'Organic' },
+        { pos: [-1.2, 0.6, 1.3], label: 'Heart' },
+        { pos: [0.4, 1.4, -0.6], label: 'Plant' },
+        { pos: [-0.9, -1.0, 1.2], label: 'Wellness' },
+        { pos: [1.1, -1.2, -0.8], label: 'Nutrition' },
+        { pos: [-1.3, 1.0, -0.5], label: 'Supplements' },
+        { pos: [0.2, 0.3, 1.9], label: 'Vitality' },
+        { pos: [-0.4, -1.4, -0.9], label: 'Natural' }
     ];
 
-    // Create SVG textures for icons
-    function createIconTexture(svgContent) {
+    // Create minimal icon textures using canvas
+    function createMinimalIcon(type) {
         const canvas = document.createElement('canvas');
-        canvas.width = 128;
-        canvas.height = 128;
+        canvas.width = 64;
+        canvas.height = 64;
         const ctx = canvas.getContext('2d');
         
-        // Draw circle background
+        // Clear
+        ctx.clearRect(0, 0, 64, 64);
+        
+        // Small circle background
         ctx.fillStyle = '#004723';
         ctx.beginPath();
-        ctx.arc(64, 64, 60, 0, Math.PI * 2);
+        ctx.arc(32, 32, 28, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw glow ring
+        // Thin ring
         ctx.strokeStyle = '#C4DA84';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(64, 64, 56, 0, Math.PI * 2);
+        ctx.arc(32, 32, 24, 0, Math.PI * 2);
         ctx.stroke();
         
-        // Draw icon
+        // Minimal icon in white
+        ctx.strokeStyle = '#FFFFFF';
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 48px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(svgContent, 64, 64);
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        switch(type) {
+            case 'Organic':
+                // Leaf
+                ctx.beginPath();
+                ctx.moveTo(32, 20);
+                ctx.quadraticCurveTo(42, 24, 42, 32);
+                ctx.quadraticCurveTo(42, 42, 32, 44);
+                ctx.quadraticCurveTo(22, 42, 22, 32);
+                ctx.quadraticCurveTo(22, 24, 32, 20);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(32, 20);
+                ctx.lineTo(32, 38);
+                ctx.stroke();
+                break;
+            case 'Heart':
+                // Heart
+                ctx.beginPath();
+                ctx.moveTo(32, 42);
+                ctx.bezierCurveTo(20, 34, 20, 26, 26, 22);
+                ctx.bezierCurveTo(30, 20, 32, 24, 32, 24);
+                ctx.bezierCurveTo(32, 24, 34, 20, 38, 22);
+                ctx.bezierCurveTo(44, 26, 44, 34, 32, 42);
+                ctx.fill();
+                break;
+            case 'Plant':
+                // Sprout
+                ctx.beginPath();
+                ctx.moveTo(32, 44);
+                ctx.lineTo(32, 28);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(26, 26, 6, 10, -0.5, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(38, 26, 6, 10, 0.5, 0, Math.PI * 2);
+                ctx.stroke();
+                break;
+            case 'Wellness':
+                // Shield
+                ctx.beginPath();
+                ctx.moveTo(32, 18);
+                ctx.lineTo(44, 24);
+                ctx.lineTo(44, 34);
+                ctx.quadraticCurveTo(44, 44, 32, 48);
+                ctx.quadraticCurveTo(20, 44, 20, 34);
+                ctx.lineTo(20, 24);
+                ctx.closePath();
+                ctx.stroke();
+                break;
+            case 'Nutrition':
+                // Apple
+                ctx.beginPath();
+                ctx.arc(32, 34, 12, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(32, 22);
+                ctx.lineTo(32, 16);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.quadraticCurveTo(36, 16, 38, 20);
+                ctx.stroke();
+                break;
+            case 'Supplements':
+                // Pill
+                ctx.beginPath();
+                ctx.rect(24, 26, 16, 12, 6);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(32, 26);
+                ctx.lineTo(32, 38);
+                ctx.stroke();
+                break;
+            case 'Vitality':
+                // Heartbeat
+                ctx.beginPath();
+                ctx.moveTo(20, 32);
+                ctx.lineTo(26, 32);
+                ctx.lineTo(28, 24);
+                ctx.lineTo(32, 40);
+                ctx.lineTo(36, 28);
+                ctx.lineTo(38, 32);
+                ctx.lineTo(44, 32);
+                ctx.stroke();
+                break;
+            case 'Natural':
+                // Leaf/flower
+                ctx.beginPath();
+                ctx.arc(32, 32, 10, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(32, 32, 4, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+        }
         
         const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
         return texture;
     }
-
-    // Simple icon mapping
-    const iconMap = {
-        'leaf': '🌿',
-        'heart': '❤️',
-        'plant': '🌱',
-        'shield': '🛡️',
-        'apple': '🍎',
-        'pill': '💊',
-        'heart-pulse': '💚',
-        'sprout': '🌾'
-    };
 
     wellnessNodes.forEach((node, index) => {
         const pos = new THREE.Vector3(...node.pos);
         
-        // Glow ring
-        const ringGeometry = new THREE.RingGeometry(0.22, 0.28, 32);
+        // Small glow ring (subtle)
+        const ringGeometry = new THREE.RingGeometry(0.18, 0.22, 32);
         const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0xC4DA84,
+            color: SOFT_GREEN,
             transparent: true,
-            opacity: 0.6,
+            opacity: 0.5,
             side: THREE.DoubleSide
         });
         const ring = new THREE.Mesh(ringGeometry, ringMaterial);
@@ -180,12 +274,12 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         ring.lookAt(0, 0, 0);
         globeGroup.add(ring);
 
-        // Outer glow
-        const outerGlowGeometry = new THREE.RingGeometry(0.32, 0.38, 32);
+        // Outer faint glow
+        const outerGlowGeometry = new THREE.RingGeometry(0.28, 0.32, 32);
         const outerGlowMaterial = new THREE.MeshBasicMaterial({
-            color: 0xC4DA84,
+            color: SOFT_GREEN,
             transparent: true,
-            opacity: 0.2,
+            opacity: 0.15,
             side: THREE.DoubleSide
         });
         const outerGlow = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
@@ -193,8 +287,8 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         outerGlow.lookAt(0, 0, 0);
         globeGroup.add(outerGlow);
 
-        // Icon sprite
-        const texture = createIconTexture(iconMap[node.icon] || '✨');
+        // Icon sprite (small, not big)
+        const texture = createMinimalIcon(node.label);
         const spriteMaterial = new THREE.SpriteMaterial({ 
             map: texture,
             transparent: true,
@@ -202,7 +296,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         });
         const sprite = new THREE.Sprite(spriteMaterial);
         sprite.position.copy(pos);
-        sprite.scale.set(0.5, 0.5, 0.5);
+        sprite.scale.set(0.35, 0.35, 0.35);
         globeGroup.add(sprite);
 
         // Store for animation
@@ -210,17 +304,18 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         node.outerGlow = outerGlow;
         node.sprite = sprite;
         node.basePos = pos.clone();
+        node.phase = index * 0.8;
     });
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const rimLight = new THREE.DirectionalLight(0xC4DA84, 0.6);
+    const rimLight = new THREE.DirectionalLight(SOFT_GREEN, 0.4);
     rimLight.position.set(5, 3, 5);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight(0x004723, 0.3);
+    const fillLight = new THREE.DirectionalLight(DEEP_GREEN, 0.2);
     fillLight.position.set(-5, -2, 3);
     scene.add(fillLight);
 
@@ -228,7 +323,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
     let rotationVelocity = { x: 0, y: 0 };
-    const autoRotationSpeed = 0.0008;
+    const autoRotationSpeed = 0.0006;
 
     function animate() {
         requestAnimationFrame(animate);
@@ -241,20 +336,20 @@ document.querySelectorAll('.nav-links a').forEach(link => {
             rotationVelocity.y *= 0.95;
         }
 
-        // Animate particles
+        // Animate particles slowly
         const time = Date.now() * 0.001;
-        particles.rotation.y = time * 0.03;
+        particles.rotation.y = time * 0.02;
 
-        // Pulse nodes
-        wellnessNodes.forEach((node, i) => {
-            const pulse = 1 + Math.sin(time * 2 + i) * 0.1;
+        // Gentle pulse for nodes
+        wellnessNodes.forEach((node) => {
+            const pulse = 1 + Math.sin(time * 1.5 + node.phase) * 0.08;
             if (node.ring) node.ring.scale.set(pulse, pulse, pulse);
-            if (node.outerGlow) node.outerGlow.scale.set(pulse * 1.2, pulse * 1.2, pulse * 1.2);
+            if (node.outerGlow) node.outerGlow.scale.set(pulse * 1.3, pulse * 1.3, pulse * 1.3);
         });
 
-        // Rotate outer sphere slowly
-        outerSphere.rotation.y -= 0.0003;
-        outerSphere.rotation.x += 0.0002;
+        // Slow outer sphere rotation
+        outerSphere.rotation.y -= 0.0002;
+        outerSphere.rotation.x += 0.0001;
 
         renderer.render(scene, camera);
     }
