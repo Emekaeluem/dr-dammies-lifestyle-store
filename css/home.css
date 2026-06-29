@@ -1663,12 +1663,33 @@ img, svg, video, canvas {
     .newsletter-form .btn {
         width: 100%;
         justify-content: center;
+        padding: 14px 20px;
+        min-height: 48px;
     }
 
     .footer-inner {
-        grid-template-columns: 1fr;
-        gap: 32px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
         margin-bottom: 40px;
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    .footer-brand p {
+        max-width: 100%;
+    }
+
+    .footer-col {
+        text-align: center;
+    }
+
+    .footer-col ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .footer-brand p {
@@ -1692,6 +1713,30 @@ img, svg, video, canvas {
    RESPONSIVE - SMALL MOBILE (max-width: 480px)
    ============================================ */
 
+
+
+    /* Healthy living - horizontal text on mobile */
+    .healthy-quote {
+        margin-bottom: 24px;
+    }
+
+    .healthy-quote p {
+        margin-bottom: 4px;
+        display: inline;
+    }
+
+    .healthy-quote p::after {
+        content: ' ';
+    }
+
+    .healthy-quote p:last-child::after {
+        content: '';
+    }
+
+    .healthy-quote p:last-child {
+        display: block;
+        margin-bottom: 0;
+    }
 @media (max-width: 480px) {
     .hero-left h1 {
         font-size: 26px;
@@ -1702,8 +1747,9 @@ img, svg, video, canvas {
     }
 
     .btn {
-        padding: 13px 20px;
-        font-size: 13.5px;
+        padding: 14px 24px;
+        font-size: 14px;
+        min-height: 48px;
     }
 
     .trust-strip {
@@ -1727,20 +1773,32 @@ img, svg, video, canvas {
     }
 
     .float-tag {
-        display: none;
+        display: flex;
+        font-size: 10px;
+        padding: 5px 10px;
+        gap: 5px;
     }
+
+    .float-tag--1 { top: 5%; left: 5%; }
+    .float-tag--2 { top: 28%; left: 2%; }
+    .float-tag--3 { bottom: 28%; left: 5%; }
+    .float-tag--4 { top: 5%; right: 2%; }
+    .float-tag--5 { top: 28%; right: 2%; }
+    .float-tag--6 { bottom: 28%; right: 5%; }
 
     .trust-bar {
         padding: 12px 16px;
         gap: 10px;
     }
 
-    .trust-bar-item span {
+    .trust-bar-item span:not(.trust-bar-icon) {
         display: none;
     }
 
     .trust-bar-item {
         gap: 0;
+        flex-direction: column;
+        align-items: center;
     }
 
     .trust-bar-icon {
@@ -1774,7 +1832,7 @@ img, svg, video, canvas {
     }
 
     .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .product-image {
@@ -1826,8 +1884,22 @@ img, svg, video, canvas {
         padding: 48px 20px 32px;
     }
 
+    .footer-inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
     .footer-brand h3 {
         font-size: 18px;
+    }
+
+    .footer-col h4 {
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+    .footer-col a {
+        font-size: 13px;
     }
 }
 
