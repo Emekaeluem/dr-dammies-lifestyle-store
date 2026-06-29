@@ -583,3 +583,53 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         renderer.setSize(w, h);
     }, { passive: true });
 })();
+// ============================================
+// SCROLL REVEAL ANIMATION
+// ============================================
+(function () {
+    const revealEls = document.querySelectorAll(
+        '.about-glass, .cat-card, .product-card, .why-card, .testi-card, .blog-card, .about-stat-card'
+    );
+
+    if (!revealEls.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    revealEls.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(28px)';
+        el.style.transition = `opacity 0.55s ease ${(i % 4) * 0.08}s, transform 0.55s var(--ease-out) ${(i % 4) * 0.08}s`;
+        observer.observe(el);
+    });
+})();
+
+// ============================================
+// NEWSLETTER FORM
+// ============================================
+(function () {
+    const form = document.querySelector('.newsletter-form');
+    const input = document.querySelector('.newsletter-input');
+    const btn = document.querySelector('.newsletter-btn');
+    if (!form || !input || !btn) return;
+
+    btn.addEventListener('click', () => {
+        const email = input.value.trim();
+        if (!email || !email.includes('@')) {
+            input.style.borderColor = '#ff6b6b';
+            setTimeout(() => input.style.borderColor = '', 1500);
+            return;
+        }
+        btn.textContent = '✓ Subscribed!';
+        btn.style.background = '#2E7D52';
+        input.value = '';
+        setTimeout(() => { btn.textContent = 'Subscribe'; btn.style.background = ''; }, 3000);
+    });
+})();
