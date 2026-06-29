@@ -1471,7 +1471,8 @@ img, svg, video, canvas {
     }
 
     .products-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .footer-inner {
@@ -1579,9 +1580,10 @@ img, svg, video, canvas {
     .trust-bar-track {
         display: flex;
         gap: 32px;
-        animation: marquee-scroll 20s linear infinite;
+        animation: marquee-scroll 15s linear infinite;
         white-space: nowrap;
         padding: 0 20px;
+        width: max-content;
     }
 
     .trust-bar-item {
@@ -1818,9 +1820,10 @@ img, svg, video, canvas {
     .trust-bar-track {
         display: flex;
         gap: 24px;
-        animation: marquee-scroll 18s linear infinite;
+        animation: marquee-scroll 12s linear infinite;
         white-space: nowrap;
         padding: 0 16px;
+        width: max-content;
     }
 
     .trust-bar-item {
@@ -1864,7 +1867,8 @@ img, svg, video, canvas {
     }
 
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 
     .product-image {
@@ -1943,6 +1947,11 @@ img, svg, video, canvas {
 @keyframes marquee-scroll {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+}
+
+/* Horizontal scroll for trust bar */
+.trust-bar {
+    overflow: hidden;
 }
 @media (prefers-reduced-motion: reduce) {
     .eyebrow-dot,
