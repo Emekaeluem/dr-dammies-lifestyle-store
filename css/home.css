@@ -396,6 +396,14 @@ img, svg, video, canvas {
     flex-wrap: wrap;
     position: relative;
     z-index: 10;
+    overflow: hidden;
+}
+
+.trust-bar-track {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
 }
 
 .trust-bar-item {
@@ -1286,12 +1294,12 @@ img, svg, video, canvas {
 }
 
 .footer-inner {
-    max-width: 1200px;
+    max-width: 600px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-    gap: 48px;
+    display: flex;
+    justify-content: center;
     margin-bottom: 60px;
+    text-align: center;
 }
 
 .footer-brand h3 {
@@ -1306,7 +1314,8 @@ img, svg, video, canvas {
     font-size: clamp(13px, 1.2vw, 14px);
     color: rgba(255,255,255,0.65);
     line-height: 1.7;
-    max-width: 280px;
+    max-width: 400px;
+    margin: 0 auto 20px;
 }
 
 .footer-col h4 {
@@ -1616,7 +1625,7 @@ img, svg, video, canvas {
     }
 
     .products-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 16px;
     }
 
@@ -1668,28 +1677,22 @@ img, svg, video, canvas {
     }
 
     .footer-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 28px;
+        display: flex;
+        justify-content: center;
         margin-bottom: 40px;
     }
 
     .footer-brand {
-        grid-column: 1 / -1;
         text-align: center;
+        max-width: 400px;
     }
 
     .footer-brand p {
         max-width: 100%;
     }
 
-    .footer-col {
-        text-align: center;
-    }
-
-    .footer-col ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .footer-social {
+        justify-content: center;
     }
 
     .footer-brand p {
@@ -1885,21 +1888,20 @@ img, svg, video, canvas {
     }
 
     .footer-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
+        display: flex;
+        justify-content: center;
     }
 
     .footer-brand h3 {
         font-size: 18px;
     }
 
-    .footer-col h4 {
-        font-size: 12px;
-        margin-bottom: 12px;
+    .footer-brand p {
+        font-size: 13px;
     }
 
-    .footer-col a {
-        font-size: 13px;
+    .footer-social {
+        justify-content: center;
     }
 }
 
@@ -1907,6 +1909,12 @@ img, svg, video, canvas {
    REDUCED MOTION
    ============================================ */
 
+
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
 @media (prefers-reduced-motion: reduce) {
     .eyebrow-dot,
     .float-tag,
