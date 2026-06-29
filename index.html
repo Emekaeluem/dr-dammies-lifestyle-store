@@ -6,9 +6,10 @@
     <title>Dr. Dammie's Lifestyle Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
+<base target="_blank">
 </head>
 <body>
 
@@ -17,26 +18,30 @@
         <a href="index.html" class="logo">
             <img src="images/logo.png" alt="Dr. Dammie's Lifestyle Store">
         </a>
+
         <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
             <span></span><span></span><span></span>
         </button>
+
         <ul class="nav-links" id="navLinks">
             <li><a href="#">Shop</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="about.html">About Us</a></li>
             <li><a href="blog.html">Blog</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="#" class="nav-cta">Shop Now →</a></li>
+            <li><a href="#" class="nav-cta">Shop Now &#8594;</a></li>
         </ul>
     </nav>
 
     <!-- ===== HERO SECTION ===== -->
     <section class="hero">
+
+        <!-- Background layers -->
         <div class="hero-bg-layer hero-bg-blob1"></div>
         <div class="hero-bg-layer hero-bg-blob2"></div>
         <div class="hero-grid-lines"></div>
 
-        <div class="hero-left">
+        <div class="hero-left" data-animate="fade-up">
             <div class="eyebrow">
                 <span class="eyebrow-dot"></span>
                 Welcome to Healthier Living
@@ -48,7 +53,7 @@
             </h1>
 
             <p class="subheadline">
-                Discover premium organic, vegan, gluten-free, keto &amp; wellness products —
+                Discover premium organic, vegan, gluten-free, keto & wellness products — 
                 carefully curated to help you and your family thrive every day.
             </p>
 
@@ -66,21 +71,21 @@
             <div class="trust-strip">
                 <div class="trust-item">
                     <div class="trust-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
                     <span>Premium Quality</span>
                 </div>
                 <div class="trust-divider"></div>
                 <div class="trust-item">
                     <div class="trust-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </div>
                     <span>Family Trusted</span>
                 </div>
                 <div class="trust-divider"></div>
                 <div class="trust-item">
                     <div class="trust-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
                     <span>Health First</span>
                 </div>
@@ -94,165 +99,166 @@
             </div>
         </div>
 
-        <div class="hero-right">
-            <div class="globe-scene">
-                <!-- Glow rings (CSS) -->
-                <div class="globe-glow globe-glow--a"></div>
-                <div class="globe-glow globe-glow--b"></div>
-                <!-- Three.js canvas goes here -->
-                <div id="globe-container"></div>
-                <!-- Floating category chips -->
-                <div class="float-tag float-tag--1"><span class="ft-icon">🌿</span><span>Organic</span></div>
-                <div class="float-tag float-tag--2"><span class="ft-icon">🥑</span><span>Keto-Friendly</span></div>
-                <div class="float-tag float-tag--3"><span class="ft-icon">🌾</span><span>Gluten-Free</span></div>
-                <div class="float-tag float-tag--4"><span class="ft-icon">🥗</span><span>Low-Carb</span></div>
-                <div class="float-tag float-tag--5"><span class="ft-icon">🍫</span><span>Chocolate &amp; Treats</span></div>
-                <div class="float-tag float-tag--6"><span class="ft-icon">🥜</span><span>Healthy Snacks</span></div>
+        <div class="hero-right" data-animate="fade-in" data-delay="200">
+            <div id="globe-container"></div>
+
+            <!-- Floating product category tags -->
+            <div class="float-tag float-tag--1">
+                <span class="float-tag-icon">&#127807;</span>
+                <span>Organic</span>
+            </div>
+            <div class="float-tag float-tag--2">
+                <span class="float-tag-icon">&#129361;</span>
+                <span>Keto-Friendly</span>
+            </div>
+            <div class="float-tag float-tag--3">
+                <span class="float-tag-icon">&#127806;</span>
+                <span>Gluten-Free</span>
+            </div>
+            <div class="float-tag float-tag--4">
+                <span class="float-tag-icon">&#129367;</span>
+                <span>Low-Carb Options</span>
+            </div>
+            <div class="float-tag float-tag--5">
+                <span class="float-tag-icon">&#127851;</span>
+                <span>Chocolate &amp; Treats</span>
+            </div>
+            <div class="float-tag float-tag--6">
+                <span class="float-tag-icon">&#129372;</span>
+                <span>Healthy Snacks</span>
             </div>
         </div>
     </section>
 
-    <!-- ===== BEST SELLERS ===== -->
-    <section class="bestsellers" id="bestsellers">
-        <div class="section-header">
-            <div class="section-eyebrow">
-                <span class="eyebrow-dot"></span>
-                Top Picks
-            </div>
-            <h2>Our Best Sellers</h2>
-            <p>Hand-picked by Dr. Dammie for your healthiest self.</p>
+    <!-- ===== BEST SELLERS SECTION ===== -->
+    <section class="best-sellers" id="best-sellers">
+        <div class="section-header" data-animate="fade-up">
+            <span class="section-eyebrow">Top Picks</span>
+            <h2>Best Sellers</h2>
+            <p>Our most loved products, chosen by health-conscious families like yours.</p>
         </div>
 
         <div class="products-grid">
-
-            <div class="product-card">
-                <div class="product-badge">Best Seller</div>
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 1.jpeg" alt="Product 1" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="0">
+                <div class="product-image">
+                    <img src="images/product1.jpeg" alt="Best Seller Product 1" loading="lazy">
+                    <div class="product-badge">Bestseller</div>
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Organic</span>
-                    <h3>Organic Wellness Product 1</h3>
-                    <div class="product-stars">★★★★★ <span>(124)</span></div>
+                    <h3>Organic Superfood Blend</h3>
+                    <p class="product-desc">Nutrient-dense daily wellness powder</p>
                     <div class="product-footer">
-                        <span class="product-price">₦8,500</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;12,500</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 2.jpeg" alt="Product 2" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="100">
+                <div class="product-image">
+                    <img src="images/product2.jpeg" alt="Best Seller Product 2" loading="lazy">
+                    <div class="product-badge">Popular</div>
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Keto</span>
-                    <h3>Keto-Friendly Product 2</h3>
-                    <div class="product-stars">★★★★★ <span>(98)</span></div>
+                    <h3>Keto-Friendly Protein Bar</h3>
+                    <p class="product-desc">Low-carb, high-protein energy snack</p>
                     <div class="product-footer">
-                        <span class="product-price">₦12,000</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;8,000</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-badge product-badge--new">New</div>
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 3.jpeg" alt="Product 3" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="200">
+                <div class="product-image">
+                    <img src="images/product3.jpeg" alt="Best Seller Product 3" loading="lazy">
+                    <div class="product-badge">Top Rated</div>
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Gluten-Free</span>
-                    <h3>Gluten-Free Product 3</h3>
-                    <div class="product-stars">★★★★☆ <span>(76)</span></div>
+                    <h3>Gluten-Free Granola Mix</h3>
+                    <p class="product-desc">Crunchy, wholesome breakfast blend</p>
                     <div class="product-footer">
-                        <span class="product-price">₦9,200</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;10,500</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 4.jpeg" alt="Product 4" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="300">
+                <div class="product-image">
+                    <img src="images/product4.jpeg" alt="Best Seller Product 4" loading="lazy">
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Low-Carb</span>
-                    <h3>Low-Carb Product 4</h3>
-                    <div class="product-stars">★★★★★ <span>(211)</span></div>
+                    <h3>Plant-Based Protein Powder</h3>
+                    <p class="product-desc">Clean vegan muscle recovery</p>
                     <div class="product-footer">
-                        <span class="product-price">₦7,800</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;15,000</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-badge">Best Seller</div>
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 5.jpeg" alt="Product 5" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="400">
+                <div class="product-image">
+                    <img src="images/product5.jpeg" alt="Best Seller Product 5" loading="lazy">
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Chocolate</span>
-                    <h3>Dark Chocolate Product 5</h3>
-                    <div class="product-stars">★★★★★ <span>(189)</span></div>
+                    <h3>Dark Chocolate Almonds</h3>
+                    <p class="product-desc">Antioxidant-rich guilt-free treat</p>
                     <div class="product-footer">
-                        <span class="product-price">₦6,500</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;7,500</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 6.jpeg" alt="Product 6" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="500">
+                <div class="product-image">
+                    <img src="images/product6.jpeg" alt="Best Seller Product 6" loading="lazy">
+                    <div class="product-badge">New</div>
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Snacks</span>
-                    <h3>Healthy Snack Product 6</h3>
-                    <div class="product-stars">★★★★☆ <span>(55)</span></div>
+                    <h3>Herbal Wellness Tea</h3>
+                    <p class="product-desc">Calming, detoxifying herbal blend</p>
                     <div class="product-footer">
-                        <span class="product-price">₦5,000</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;5,500</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-badge product-badge--new">New</div>
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 7.jpeg" alt="Product 7" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="600">
+                <div class="product-image">
+                    <img src="images/product7.jpeg" alt="Best Seller Product 7" loading="lazy">
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Wellness</span>
-                    <h3>Wellness Product 7</h3>
-                    <div class="product-stars">★★★★★ <span>(143)</span></div>
+                    <h3>Omega-3 Fish Oil Capsules</h3>
+                    <p class="product-desc">Heart & brain health support</p>
                     <div class="product-footer">
-                        <span class="product-price">₦11,500</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;18,000</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-img-wrap">
-                    <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/Product 8.jpeg" alt="Product 8" loading="lazy">
+            <div class="product-card" data-animate="fade-up" data-delay="700">
+                <div class="product-image">
+                    <img src="images/product8.jpeg" alt="Best Seller Product 8" loading="lazy">
+                    <div class="product-badge">Bestseller</div>
                 </div>
                 <div class="product-info">
-                    <span class="product-tag">Natural</span>
-                    <h3>Natural Product 8</h3>
-                    <div class="product-stars">★★★★★ <span>(88)</span></div>
+                    <h3>Organic Coconut Oil</h3>
+                    <p class="product-desc">Cold-pressed, multi-purpose super oil</p>
                     <div class="product-footer">
-                        <span class="product-price">₦9,900</span>
-                        <button class="add-to-cart">Add to Cart</button>
+                        <span class="product-price">&#8358;9,500</span>
+                        <a href="#" class="product-btn">Add to Cart</a>
                     </div>
                 </div>
             </div>
-
         </div>
 
-        <div class="section-cta">
-            <a href="#" class="btn btn-primary">View All Products →</a>
+        <div class="section-cta" data-animate="fade-up">
+            <a href="#" class="btn btn-primary btn-lg">View All Products</a>
         </div>
     </section>
 
