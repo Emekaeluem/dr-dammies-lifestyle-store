@@ -388,8 +388,8 @@ img, svg, video, canvas {
    TRUST BAR
    ============================================ */
 .trust-bar {
-    padding: 24px 40px;
-    background: var(--forest);
+    padding: 20px 40px;
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 50%, var(--forest-light) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -397,33 +397,30 @@ img, svg, video, canvas {
     flex-wrap: wrap;
     position: relative;
     z-index: 10;
-    overflow: hidden;
 }
-
-
 
 .trust-bar-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--white);
     white-space: nowrap;
     flex-shrink: 0;
     padding: 12px 20px;
-    border-radius: var(--radius-lg);
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: transform 0.3s var(--ease-spring), background 0.3s ease, border-color 0.3s ease;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: transform 0.3s var(--ease-spring), background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .trust-bar-item:hover {
     transform: translateY(-3px);
-    background: rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.18);
     border-color: rgba(196,218,132,0.3);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .trust-bar-icon {
@@ -447,6 +444,14 @@ img, svg, video, canvas {
     width: 16px;
     height: 16px;
     stroke: var(--sage);
+}
+
+.trust-bar-track {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 /* ============================================
@@ -1598,28 +1603,38 @@ img, svg, video, canvas {
     }
 
     .trust-bar {
-        padding: 16px 20px;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
+        padding: 14px 0;
+        gap: 0;
+        overflow: hidden;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+    }
+
+    .trust-bar-track {
+        display: flex;
+        gap: 12px;
+        animation: marquee-scroll 16s linear infinite;
+        white-space: nowrap;
+        padding: 0 16px;
     }
 
     .trust-bar-item {
         font-size: 12px;
         gap: 6px;
-        padding: 10px 14px;
-        border-radius: var(--radius-md);
+        padding: 10px 16px;
+        border-radius: 12px;
+        flex-shrink: 0;
     }
 
     .trust-bar-icon {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         border-radius: 8px;
     }
 
     .trust-bar-icon svg {
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
     }
 
     .about-section,
@@ -1834,17 +1849,27 @@ img, svg, video, canvas {
     .float-tag--6 { bottom: 28%; right: 5%; }
 
     .trust-bar {
-        padding: 14px 16px;
-        gap: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
+        padding: 12px 0;
+        gap: 0;
+        overflow: hidden;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+    }
+
+    .trust-bar-track {
+        display: flex;
+        gap: 10px;
+        animation: marquee-scroll 14s linear infinite;
+        white-space: nowrap;
+        padding: 0 12px;
     }
 
     .trust-bar-item {
         font-size: 11px;
         gap: 5px;
-        padding: 8px 12px;
-        border-radius: var(--radius-md);
+        padding: 8px 14px;
+        border-radius: 10px;
+        flex-shrink: 0;
     }
 
     .trust-bar-icon {
@@ -1961,6 +1986,12 @@ img, svg, video, canvas {
    ============================================ */
 
 
+
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
 @media (prefers-reduced-motion: reduce) {
     .eyebrow-dot,
     .float-tag,
