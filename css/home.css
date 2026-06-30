@@ -178,6 +178,23 @@
     color: var(--white);
     border: none;
     box-shadow: 0 4px 20px rgba(0,71,35,0.28), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -130%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,0.22), transparent);
+    transition: left 0.7s var(--ease-out);
+}
+
+.btn-primary:hover::before {
+    left: 130%;
 }
 
 .btn-primary:hover {
@@ -400,6 +417,15 @@ img, svg, video, canvas {
     overflow: hidden;
 }
 
+.trust-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
 .trust-bar-track {
     display: flex;
     justify-content: center;
@@ -527,6 +553,16 @@ img, svg, video, canvas {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.about-right::before {
+    content: '';
+    position: absolute;
+    inset: 20px -20px -20px 20px;
+    border: 1.5px solid rgba(196,218,132,0.5);
+    border-radius: var(--radius-lg);
+    z-index: 0;
 }
 
 .about-image-card {
@@ -538,6 +574,7 @@ img, svg, video, canvas {
     align-items: center;
     justify-content: center;
     position: relative;
+    z-index: 1;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
 }
@@ -655,6 +692,7 @@ img, svg, video, canvas {
     border: 1px solid rgba(0,71,35,0.08);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease, border-color 0.3s ease;
     cursor: pointer;
     position: relative;
@@ -747,6 +785,15 @@ img, svg, video, canvas {
     pointer-events: none;
 }
 
+.best-sellers::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
 .section-header {
     text-align: center;
     max-width: 600px;
@@ -799,8 +846,26 @@ img, svg, video, canvas {
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: var(--radius-lg);
     overflow: hidden;
+    position: relative;
     transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease, background 0.3s ease;
     cursor: pointer;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--sage), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.product-card:hover::before {
+    opacity: 1;
 }
 
 .product-card:hover {
@@ -920,6 +985,15 @@ img, svg, video, canvas {
     height: 600px;
     background: radial-gradient(circle, rgba(196,218,132,0.06) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
+}
+
+.why-section::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
     pointer-events: none;
 }
 
@@ -1121,6 +1195,21 @@ img, svg, video, canvas {
     -webkit-backdrop-filter: blur(16px);
     transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease;
     position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.testimonial-card::before {
+    content: '\201C';
+    position: absolute;
+    top: 8px;
+    right: 24px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 80px;
+    font-weight: 700;
+    color: var(--sage);
+    opacity: 0.35;
+    line-height: 1;
+    pointer-events: none;
 }
 
 .testimonial-card:hover {
@@ -1189,6 +1278,7 @@ img, svg, video, canvas {
     border-radius: var(--radius-lg);
     background: rgba(255,255,255,0.9);
     border: 1px solid rgba(0,71,35,0.06);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
     transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease;
     cursor: pointer;
@@ -1275,6 +1365,15 @@ img, svg, video, canvas {
     height: 500px;
     background: radial-gradient(circle, rgba(196,218,132,0.08) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
+}
+
+.newsletter::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
     pointer-events: none;
 }
 
@@ -1385,6 +1484,16 @@ img, svg, video, canvas {
     padding: 80px 80px 40px;
     background: var(--forest);
     position: relative;
+    overflow: hidden;
+}
+
+.footer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
+    pointer-events: none;
 }
 
 .footer-inner {
