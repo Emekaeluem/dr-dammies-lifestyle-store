@@ -1,1 +1,568 @@
+/* ============================================
+   ABOUT US PAGE STYLES
+   ============================================ */
 
+/* ---- Botanical Background Pattern ---- */
+.about-page-hero,
+.our-story,
+.what-we-offer,
+.about-why-section,
+.our-promise,
+.about-cta {
+    position: relative;
+}
+
+.about-page-hero::before,
+.our-story::before,
+.what-we-offer::before,
+.about-why-section::before,
+.our-promise::before,
+.about-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 Q70 40 60 60 Q50 40 60 20 M60 60 Q75 50 90 60 Q75 70 60 60 M60 60 Q45 50 30 60 Q45 70 60 60' fill='none' stroke='%23003D1F' stroke-width='0.5' opacity='0.03'/%3E%3Ccircle cx='20' cy='20' r='1.5' fill='%23003D1F' opacity='0.02'/%3E%3Ccircle cx='100' cy='100' r='1.5' fill='%23003D1F' opacity='0.02'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ============================================
+   PAGE HERO
+   ============================================ */
+.about-page-hero {
+    padding: 140px 80px 100px;
+    background: var(--off-white);
+    min-height: auto;
+}
+
+.about-page-hero-inner {
+    max-width: 800px;
+    position: relative;
+    z-index: 1;
+}
+
+.about-page-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--forest-mid);
+    margin-bottom: 24px;
+    padding: 8px 20px;
+    border: 1px solid rgba(0,71,35,0.15);
+    border-radius: var(--radius-pill);
+    background: var(--sage-dim);
+}
+
+.about-page-hero h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 600;
+    color: var(--forest);
+    line-height: 1.1;
+    margin-bottom: 32px;
+    letter-spacing: -0.02em;
+}
+
+.about-page-hero p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    max-width: 680px;
+}
+
+.about-page-hero p:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   OUR STORY
+   ============================================ */
+.our-story {
+    padding: 100px 80px;
+    background: var(--white);
+}
+
+.our-story-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    position: relative;
+    z-index: 1;
+}
+
+.our-story-left {
+    flex: 1;
+}
+
+.our-story-left h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(28px, 3.5vw, 40px);
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 28px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.our-story-left p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+}
+
+.our-story-left p:last-child {
+    margin-bottom: 0;
+}
+
+.our-story-right {
+    flex: 0 0 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.our-story-right::before {
+    content: '';
+    position: absolute;
+    inset: 20px -20px -20px 20px;
+    border: 1.5px solid rgba(196,218,132,0.5);
+    border-radius: var(--radius-lg);
+    z-index: 0;
+}
+
+.story-image-card {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.story-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--ease-out);
+}
+
+.story-image-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ============================================
+   MISSION & VISION (Dark Band)
+   ============================================ */
+.mission-vision {
+    padding: 100px 80px;
+    background: var(--forest);
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-vision::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+.mission-vision-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.mission-vision .section-header h2 {
+    color: var(--white);
+}
+
+.mission-vision .section-header p {
+    color: rgba(255,255,255,0.7);
+}
+
+.mission-vision-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mission-card,
+.vision-card {
+    padding: 48px 36px;
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.4s var(--ease-spring), background 0.3s ease, border-color 0.3s ease;
+}
+
+.mission-card:hover,
+.vision-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(196,218,132,0.2);
+}
+
+.mission-icon,
+.vision-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(196,218,132,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.mission-icon svg,
+.vision-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--sage);
+}
+
+.mission-card h3,
+.vision-card h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--sage);
+    margin-bottom: 16px;
+}
+
+.mission-card p,
+.vision-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.75;
+}
+
+/* ============================================
+   WHAT WE OFFER
+   ============================================ */
+.what-we-offer {
+    padding: 100px 80px;
+    background: var(--off-white);
+}
+
+.what-we-offer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.what-we-offer .section-header {
+    margin-bottom: 48px;
+}
+
+.offer-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.offer-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 22px;
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(0,71,35,0.1);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--forest);
+    transition: transform 0.2s var(--ease-spring), background 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.offer-tag:hover {
+    transform: translateY(-2px);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    border-color: rgba(196,218,132,0.5);
+}
+
+.offer-closing {
+    text-align: center;
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   WHY CHOOSE US (About Page)
+   ============================================ */
+.about-why-section {
+    padding: 100px 80px;
+    background: var(--white);
+}
+
+.about-why-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.about-why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.about-why-card {
+    padding: 36px 28px;
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(0,71,35,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.4s var(--ease-spring), box-shadow 0.4s ease, border-color 0.3s ease;
+}
+
+.about-why-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0,71,35,0.1);
+    border-color: rgba(196,218,132,0.4);
+}
+
+.about-why-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--sage-dim), rgba(196,218,132,0.3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: transform 0.3s var(--ease-spring), background 0.3s ease;
+}
+
+.about-why-card:hover .about-why-icon {
+    transform: scale(1.1) rotate(-3deg);
+    background: linear-gradient(135deg, var(--sage), rgba(196,218,132,0.5));
+}
+
+.about-why-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--forest);
+    transition: stroke 0.3s ease;
+}
+
+.about-why-card:hover .about-why-icon svg {
+    stroke: var(--forest-mid);
+}
+
+.about-why-card h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 10px;
+}
+
+.about-why-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+}
+
+/* ============================================
+   OUR PROMISE (Pull Quote)
+   ============================================ */
+.our-promise {
+    padding: 100px 80px;
+    background: var(--off-white);
+}
+
+.our-promise-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.promise-rule {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--sage), transparent);
+    margin: 0 auto;
+}
+
+.our-promise blockquote {
+    padding: 40px 0;
+}
+
+.our-promise blockquote p {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 500;
+    color: var(--forest);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+}
+
+/* ============================================
+   CTA
+   ============================================ */
+.about-cta {
+    padding: 100px 80px;
+    background: linear-gradient(180deg, var(--off-white) 0%, var(--white) 100%);
+    text-align: center;
+    position: relative;
+}
+
+.about-cta-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.about-cta h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 16px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.about-cta p {
+    font-size: 17px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 36px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1100px) {
+    .about-page-hero,
+    .our-story,
+    .mission-vision,
+    .what-we-offer,
+    .about-why-section,
+    .our-promise,
+    .about-cta {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    .our-story-inner {
+        flex-direction: column;
+        gap: 48px;
+        text-align: center;
+    }
+
+    .our-story-right {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .mission-vision-grid {
+        gap: 24px;
+    }
+
+    .about-why-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .about-page-hero,
+    .our-story,
+    .mission-vision,
+    .what-we-offer,
+    .about-why-section,
+    .our-promise,
+    .about-cta {
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .about-page-hero {
+        padding-top: 110px;
+    }
+
+    .mission-vision-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mission-card,
+    .vision-card {
+        padding: 32px 24px;
+    }
+
+    .about-why-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .offer-tags {
+        gap: 8px;
+    }
+
+    .offer-tag {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .our-promise blockquote {
+        padding: 28px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-page-hero h1 {
+        font-size: 28px;
+    }
+
+    .our-story-left h2 {
+        font-size: 26px;
+    }
+
+    .mission-card h3,
+    .vision-card h3 {
+        font-size: 20px;
+    }
+
+    .about-cta h2 {
+        font-size: 26px;
+    }
+}
