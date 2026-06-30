@@ -562,9 +562,10 @@ img, svg, video, canvas {
    PROMO IMAGE BANNER
    ============================================ */
 .promo-image-banner {
-    padding: 0;
+    padding: 40px 80px 0;
     position: relative;
     overflow: hidden;
+    background: var(--off-white);
 }
 
 .promo-image-wrapper {
@@ -574,13 +575,14 @@ img, svg, video, canvas {
     position: relative;
     border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .promo-image-wrapper img {
     width: 100%;
     height: auto;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.6s var(--ease-out);
 }
 
@@ -597,16 +599,27 @@ img, svg, video, canvas {
 
 /* Responsive */
 @media (max-width: 1100px) {
+    .promo-image-banner {
+        padding: 32px 40px 0;
+    }
+
     .promo-image-wrapper {
-        border-radius: 0;
+        border-radius: var(--radius-md);
         max-width: 100%;
     }
 }
 
 @media (max-width: 768px) {
+    .promo-image-banner {
+        padding: 24px 20px 0;
+    }
+
+    .promo-image-wrapper {
+        border-radius: var(--radius-sm);
+    }
+
     .promo-image-wrapper img {
-        min-height: 200px;
-        object-fit: cover;
+        object-fit: contain;
     }
 }
 
