@@ -628,7 +628,173 @@
 }
 
 /* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
+/* ============================================
+   SIMPLE FOOTER
+   ============================================ */
+.contact-footer {
+    background: var(--forest);
+    padding: 60px 80px 32px;
+}
+
+.contact-footer .footer-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.contact-footer .footer-brand h3 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+.contact-footer .footer-brand p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+}
+
+.contact-footer .footer-social {
+    display: flex;
+    gap: 10px;
+}
+
+.contact-footer .footer-social a {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.contact-footer .footer-social a:hover {
+    background: rgba(196,218,132,0.2);
+    transform: translateY(-2px);
+}
+
+.contact-footer .footer-social svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--white);
+}
+
+.contact-footer .footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.contact-footer .footer-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    transition: color 0.2s ease;
+}
+
+.contact-footer .footer-links a:hover {
+    color: var(--sage);
+}
+
+.contact-footer .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 20px;
+    text-align: center;
+}
+
+.contact-footer .footer-bottom p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+}
+
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
+.form-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 32px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 100%);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    box-shadow: 0 4px 20px rgba(0,71,35,0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+}
+
+.form-submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,71,35,0.35);
+}
+
+.form-submit-btn:hover::before {
+    left: 100%;
+}
+
+.form-submit-btn:active {
+    transform: translateY(-1px);
+}
+
+.form-submit-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--sage);
+    transition: transform 0.3s ease;
+}
+
+.form-submit-btn:hover svg {
+    transform: translateX(4px) rotate(-10deg);
+}
+
+/* Footer Responsive */
+@media (max-width: 768px) {
+    .contact-footer {
+        padding: 40px 20px 24px;
+    }
+
+    .contact-footer .footer-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+    }
+
+    .contact-footer .footer-social {
+        justify-content: center;
+    }
+
+    .contact-footer .footer-links {
+        gap: 16px;
+    }
+}@media (prefers-reduced-motion: reduce) {
     .contact-hero-blob1,
     .contact-hero-blob2,
     .map-pin {
