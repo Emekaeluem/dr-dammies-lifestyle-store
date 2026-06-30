@@ -678,5 +678,17 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/main.js"></script>
+    <!-- Force all links to open in same tab -->
+    <script>
+        document.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                link.removeAttribute('target');
+                if (link.getAttribute('target') === '_blank') {
+                    e.preventDefault();
+                    window.location.href = link.href;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
